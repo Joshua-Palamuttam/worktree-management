@@ -50,24 +50,34 @@ You should see: `✅ Worktree functions loaded. Type 'wt-status' to see all repo
 
 ### For Windows Command Prompt
 
-Add the `bin` directory to your PATH:
+**Step 1: Add the `bin` directory to your PATH**
 
-**Option A: Via PowerShell (run once)**
+*Option A: Via PowerShell (run once)*
 ```powershell
 [Environment]::SetEnvironmentVariable('Path', [Environment]::GetEnvironmentVariable('Path', 'User') + ';C:\worktrees-SeekOut\worktree_management\bin', 'User')
 ```
 
-**Option B: Via System Settings**
+*Option B: Via System Settings*
 1. Press `Win + R`, type `sysdm.cpl`, press Enter
 2. Click "Advanced" tab → "Environment Variables"
 3. Under "User variables", select `Path` → Edit
 4. Add new entry: `C:\worktrees-SeekOut\worktree_management\bin`
 5. Click OK and restart your terminal
 
-**Verify it works:**
+**Step 2: Run setup to configure Git Bash path**
+
+```cmd
+C:\worktrees-SeekOut\worktree_management\bin\setup.cmd
+```
+
+This creates `wt-config.cmd` with your machine-specific paths. You only need to run this once.
+
+**Step 3: Verify it works**
 ```cmd
 wt-status
 ```
+
+> **Note:** The setup script finds Git Bash automatically. This is required because Windows may have WSL's bash which uses different paths.
 
 ---
 
@@ -171,6 +181,7 @@ wt-review-done
 | `wt-review <pr#>` | Checkout PR for review |
 | `wt-review-done` | Clean up review worktree |
 | `wt-hotfix <name>` | Create hotfix from develop |
+| `wt-remove <name>` | Remove a worktree when done |
 | `wt-status` | Show status across all repos |
 | `wt-cleanup` | Remove stale worktrees |
 
@@ -200,6 +211,9 @@ wt-review 567
 REM Done reviewing, back to feature
 wt-review-done
 cd ..\develop\_feature\AI-1234-new-feature
+
+REM When feature is complete and merged, clean up
+wt-remove AI-1234-new-feature
 ```
 
 ---
@@ -237,6 +251,13 @@ C:\worktrees-SeekOut\
 ---
 
 ## Troubleshooting
+
+### "No such file or directory" when running wt-* commands
+Run `setup.cmd` first to configure Git Bash:
+```cmd
+C:\worktrees-SeekOut\worktree_management\bin\setup.cmd
+```
+This is required because Windows may use WSL's bash (which uses `/mnt/c/` paths) instead of Git Bash (which uses `/c/` paths).
 
 ### "bash: command not found" in Command Prompt
 Make sure Git for Windows is installed and `git` is in your PATH.

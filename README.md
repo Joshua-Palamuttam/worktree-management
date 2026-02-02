@@ -12,20 +12,25 @@ A workflow for managing multiple repositories with git worktrees.
 
 ## Quick Start
 
-### 1. Add to your shell profile
+### For Git Bash
 
-Add this line to your `~/.bashrc` or `~/.zshrc`:
+Add this line to your `~/.bashrc`:
 
 ```bash
 source "C:/worktrees-SeekOut/worktree_management/scripts/wt-profile.sh"
 ```
 
-Then reload:
-```bash
-source ~/.bashrc  # or source ~/.zshrc
+Then reload: `source ~/.bashrc`
+
+### For Windows Command Prompt
+
+1. Add to PATH: `C:\worktrees-SeekOut\worktree_management\bin`
+2. Run setup once:
+```cmd
+C:\worktrees-SeekOut\worktree_management\bin\setup.cmd
 ```
 
-### 2. Initialize a repository
+### Initialize a repository
 
 ```bash
 wt-init https://github.com/Zipstorm/backend.git
@@ -80,6 +85,12 @@ wt-hotfix-done critical-bug
 wt-status
 ```
 
+### Remove a worktree when done
+
+```bash
+wt-remove AI-1234-new-feature
+```
+
 ## Navigation Shortcuts
 
 | Command | Description |
@@ -89,13 +100,15 @@ wt-status
 | `wtd [repo]` | Jump to develop worktree |
 | `wtm [repo]` | Jump to main worktree |
 | `wtl` | List worktrees in current repo |
+| `wt-remove <name>` | Remove a worktree |
 
 ## Directory Structure
 
 ```
 C:/worktrees-SeekOut/
 ├── worktree_management/    # This management repo
-│   ├── scripts/            # Shell functions
+│   ├── bin/                # Windows cmd wrappers
+│   ├── scripts/            # Bash scripts
 │   ├── templates/          # Claude/VSCode configs
 │   └── config.yaml         # Repo registry
 │
@@ -170,6 +183,7 @@ Your original repos remain untouched - this creates a parallel structure.
 
 ### Cleanup
 ```bash
-wt-cleanup           # See what can be cleaned
-wt-cleanup --dry-run # Preview without changes
+wt-remove my-feature    # Remove a specific worktree
+wt-cleanup              # Remove stale worktrees
+wt-cleanup --dry-run    # Preview without changes
 ```
