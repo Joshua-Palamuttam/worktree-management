@@ -1,2 +1,2 @@
 @echo off
-bash "C:/worktrees-SeekOut/worktree_management/scripts/wt-feature.sh" %*
+bash "%~dp0..\scripts\wt-feature.sh" %*
