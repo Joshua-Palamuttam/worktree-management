@@ -56,26 +56,59 @@ cd "$repo_root"
 dir_name=$(echo "$branch_name" | sed 's|.*/||')
 worktree_path="_feature/${dir_name}"
 
-echo "🌿 Creating feature worktree..."
-echo "   Branch: ${branch_name}"
-echo "   Base: ${base_branch}"
-echo "   Path: ${worktree_path}"
-
 # Fetch latest
 git fetch origin
 
-# Determine the base ref
-if git show-ref --verify --quiet "refs/remotes/origin/${base_branch}"; then
-    base_ref="origin/${base_branch}"
-elif git show-ref --verify --quiet "refs/heads/${base_branch}"; then
-    base_ref="${base_branch}"
-else
-    echo "❌ Base branch '${base_branch}' not found"
+# Check if worktree path already exists
+if [ -d "$worktree_path" ]; then
+    echo "⚠️  Worktree already exists at: ${worktree_path}"
+    echo "   Use 'cd ${repo_root}/${worktree_path}' to access it"
     exit 1
 fi
 
-# Create the worktree with new branch
-git worktree add -b "$branch_name" "$worktree_path" "$base_ref"
+# Check if branch already exists (locally or remotely)
+branch_exists=""
+branch_ref=""
+
+if git show-ref --verify --quiet "refs/heads/${branch_name}"; then
+    branch_exists="local"
+    branch_ref="${branch_name}"
+elif git show-ref --verify --quiet "refs/remotes/origin/${branch_name}"; then
+    branch_exists="remote"
+    branch_ref="origin/${branch_name}"
+fi
+
+if [ -n "$branch_exists" ]; then
+    echo "🌿 Branch '${branch_name}' already exists (${branch_exists})"
+    echo "   Creating worktree from existing branch..."
+    echo "   Path: ${worktree_path}"
+
+    if [ "$branch_exists" = "remote" ]; then
+        # Create worktree tracking the remote branch
+        git worktree add --track -b "$branch_name" "$worktree_path" "origin/${branch_name}"
+    else
+        # Create worktree from existing local branch
+        git worktree add "$worktree_path" "$branch_name"
+    fi
+else
+    echo "🌿 Creating feature worktree..."
+    echo "   Branch: ${branch_name}"
+    echo "   Base: ${base_branch}"
+    echo "   Path: ${worktree_path}"
+
+    # Determine the base ref
+    if git show-ref --verify --quiet "refs/remotes/origin/${base_branch}"; then
+        base_ref="origin/${base_branch}"
+    elif git show-ref --verify --quiet "refs/heads/${base_branch}"; then
+        base_ref="${base_branch}"
+    else
+        echo "❌ Base branch '${base_branch}' not found"
+        exit 1
+    fi
+
+    # Create the worktree with new branch
+    git worktree add -b "$branch_name" "$worktree_path" "$base_ref"
+fi
 
 # Set upstream tracking
 cd "$worktree_path"

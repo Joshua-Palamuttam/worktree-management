@@ -118,7 +118,7 @@ wt-init https://github.com/Org/repo.git
 ## Feature Development Commands
 
 ### `wt-feature`
-Create a new feature worktree from develop.
+Create a new feature worktree from develop, or use an existing branch.
 
 ```cmd
 wt-feature my-feature-name
@@ -128,11 +128,15 @@ wt-feature joshua/experimental-thing
 
 **What it does:**
 1. Fetches latest from origin
-2. Creates new branch from `origin/develop`
+2. Checks if branch already exists (locally or remotely)
+   - If exists: creates worktree from the existing branch
+   - If new: creates new branch from `origin/develop`
 3. Creates worktree at `_feature/<name>/`
 4. Sets up upstream tracking
 
 **Result:** New worktree at `<repo>.git\_feature\<name>\`
+
+**Note:** If the branch already exists, the command will use it instead of failing.
 
 ---
 
