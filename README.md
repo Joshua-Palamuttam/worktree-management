@@ -2,6 +2,14 @@
 
 A Principal Engineer's workflow for managing multiple repositories with git worktrees.
 
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [SETUP.md](SETUP.md) | Step-by-step installation guide |
+| [COMMANDS.md](COMMANDS.md) | Complete command reference |
+| [README.md](README.md) | This file - overview and quick start |
+
 ## Quick Start
 
 ### 1. Add to your shell profile
@@ -60,7 +68,7 @@ wt-review-done
 ```bash
 wt-hotfix critical-bug
 # Now in: backend.git/_hotfix/critical-bug/
-# Based on main, not develop
+# Based on develop
 
 # When done:
 wt-hotfix-done critical-bug
