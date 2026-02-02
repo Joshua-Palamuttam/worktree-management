@@ -122,9 +122,9 @@ wt-hotfix() {
     local repo_root=$(git rev-parse --git-common-dir 2>/dev/null || git rev-parse --git-dir)
     cd "$repo_root"
 
-    echo "🚨 Creating hotfix worktree from main..."
+    echo "🚨 Creating hotfix worktree from develop..."
     git fetch origin
-    git worktree add -b "hotfix/$branch_name" "_hotfix/$branch_name" origin/main
+    git worktree add -b "hotfix/$branch_name" "_hotfix/$branch_name" origin/develop
 
     cd "_hotfix/$branch_name"
     echo "✅ Hotfix worktree ready at: $(pwd)"

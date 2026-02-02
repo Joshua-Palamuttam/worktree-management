@@ -4,6 +4,6 @@ if "%~1"=="" (
     exit /b 1
 )
 git fetch origin
-git worktree add -b "hotfix/%~1" "_hotfix/%~1" origin/main
+git worktree add -b "hotfix/%~1" "_hotfix/%~1" origin/develop
 cd /d "_hotfix\%~1"
 echo Hotfix worktree ready at: %CD%
