@@ -1,6 +1,6 @@
 # Worktree Management
 
-A Principal Engineer's workflow for managing multiple repositories with git worktrees.
+A workflow for managing multiple repositories with git worktrees.
 
 ## Documentation
 
