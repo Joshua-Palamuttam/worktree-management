@@ -115,14 +115,38 @@ C:/worktrees-SeekOut/
 4. **Clean builds** - `main/` worktree is always pristine
 5. **Muscle memory** - Same structure across all repos
 
-## Migrating Existing Repos
+## Migrating Repositories
 
-Your old repos in `C:/Seekout/` remain untouched. This is a parallel structure.
+The `wt-migrate` script handles both fresh clones and existing local repos.
 
-To migrate a repo:
+### From GitHub URL (recommended)
+
 ```bash
-wt-init https://github.com/Zipstorm/repo-name.git
+# Basic usage
+wt-migrate --from-url https://github.com/Zipstorm/backend.git
+
+# With custom name
+wt-migrate --from-url https://github.com/Zipstorm/backend.git my-backend
 ```
+
+### From Existing Local Directory
+
+```bash
+# Migrate from existing clone (fetches fresh from remote)
+wt-migrate --from-dir "C:/Seekout/backend"
+
+# With custom name
+wt-migrate --from-dir "C:/Seekout/AI-1099" AI-1099
+```
+
+### What Migration Does
+
+1. Clones the repo as a bare repository (`repo.git/`)
+2. Configures proper remote tracking
+3. Creates `main/` and `develop/` worktrees (if branches exist)
+4. Creates `_feature/`, `_review/`, `_hotfix/` directories
+
+Your original repos remain untouched - this creates a parallel structure.
 
 ## Tips
 

@@ -51,6 +51,11 @@ wt-cleanup() {
     bash "$WORKTREE_SCRIPTS/wt-cleanup.sh" "$@"
 }
 
+# Migrate existing repo or clone from URL to worktree structure
+wt-migrate() {
+    bash "$WORKTREE_SCRIPTS/wt-migrate.sh" "$@"
+}
+
 # ============================================================
 # Quick Navigation
 # ============================================================
