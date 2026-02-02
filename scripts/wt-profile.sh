@@ -118,36 +118,16 @@ wtl() {
 # ============================================================
 
 wt-hotfix() {
-    local branch_name=$1
-    if [ -z "$branch_name" ]; then
-        echo "Usage: wt-hotfix <branch_name>"
-        return 1
+    bash "$WORKTREE_SCRIPTS/wt-hotfix.sh" "$@"
+    # Auto-cd to the new worktree
+    if [ $? -eq 0 ] && [ -n "$1" ]; then
+        local repo_root=$(git rev-parse --git-common-dir 2>/dev/null || git rev-parse --git-dir)
+        cd "$repo_root/_hotfix/$1" 2>/dev/null || true
     fi
-
-    local repo_root=$(git rev-parse --git-common-dir 2>/dev/null || git rev-parse --git-dir)
-    cd "$repo_root"
-
-    echo "🚨 Creating hotfix worktree from develop..."
-    git fetch origin
-    git worktree add -b "hotfix/$branch_name" "_hotfix/$branch_name" origin/develop
-
-    cd "_hotfix/$branch_name"
-    echo "✅ Hotfix worktree ready at: $(pwd)"
 }
 
 wt-hotfix-done() {
-    local branch_name=$1
-    if [ -z "$branch_name" ]; then
-        echo "Usage: wt-hotfix-done <branch_name>"
-        return 1
-    fi
-
-    local repo_root=$(git rev-parse --git-common-dir 2>/dev/null || git rev-parse --git-dir)
-    cd "$repo_root"
-
-    git worktree remove "_hotfix/$branch_name" --force
-    git worktree prune
-    echo "✅ Hotfix worktree removed"
+    bash "$WORKTREE_SCRIPTS/wt-hotfix-done.sh" "$@"
 }
 
 # ============================================================
