@@ -1,14 +1,7 @@
 @echo off
-REM Jump to main worktree
+call "%~dp0wt-config.cmd"
 if "%~1"=="" (
-    REM Try to find main in current repo structure
-    if exist "main" (
-        cd /d "main"
-    ) else if exist "..\main" (
-        cd /d "..\main"
-    ) else (
-        echo No main worktree found. Specify repo: wtm repo-name
-    )
+    if exist "main" ( cd /d "main" ) else ( echo No main worktree found )
 ) else (
-    cd /d "C:\worktrees-SeekOut\%~1.git\main"
+    cd /d "%WORKTREE_ROOT%\%~1.git\main"
 )

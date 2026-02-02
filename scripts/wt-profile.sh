@@ -56,6 +56,11 @@ wt-migrate() {
     bash "$WORKTREE_SCRIPTS/wt-migrate.sh" "$@"
 }
 
+# Remove a worktree
+wt-remove() {
+    bash "$WORKTREE_SCRIPTS/wt-remove.sh" "$@"
+}
+
 # ============================================================
 # Quick Navigation
 # ============================================================

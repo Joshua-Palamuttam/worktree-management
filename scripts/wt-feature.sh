@@ -4,13 +4,37 @@
 
 set -e
 
-branch_name=$1
-base_branch=${2:-develop}
+# Parse arguments
+branch_name=""
+base_branch="develop"
+workdir=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --workdir)
+            workdir="$2"
+            shift 2
+            ;;
+        *)
+            if [ -z "$branch_name" ]; then
+                branch_name="$1"
+            else
+                base_branch="$1"
+            fi
+            shift
+            ;;
+    esac
+done
 
 if [ -z "$branch_name" ]; then
     echo "Usage: wt-feature <branch_name> [base_branch]"
     echo "Example: wt-feature AI-1234-new-feature develop"
     exit 1
+fi
+
+# Change to workdir if provided
+if [ -n "$workdir" ]; then
+    cd "$workdir"
 fi
 
 # Get the bare repo root (find .git directory or bare repo)

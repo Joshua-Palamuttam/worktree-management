@@ -1,14 +1,7 @@
 @echo off
-REM Jump to develop worktree
+call "%~dp0wt-config.cmd"
 if "%~1"=="" (
-    REM Try to find develop in current repo structure
-    if exist "develop" (
-        cd /d "develop"
-    ) else if exist "..\develop" (
-        cd /d "..\develop"
-    ) else (
-        echo No develop worktree found. Specify repo: wtd repo-name
-    )
+    if exist "develop" ( cd /d "develop" ) else ( echo No develop worktree found )
 ) else (
-    cd /d "C:\worktrees-SeekOut\%~1.git\develop"
+    cd /d "%WORKTREE_ROOT%\%~1.git\develop"
 )

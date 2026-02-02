@@ -10,3 +10,6 @@ Thumbs.db
 # Local overrides
 *.local.yaml
 secrets/
+
+# Machine-specific config (created by setup.cmd)
+bin/wt-config.cmd

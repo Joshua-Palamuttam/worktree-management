@@ -193,6 +193,28 @@ wt-review-done
 
 ---
 
+### `wt-remove`
+Remove a feature, hotfix, or any worktree when you're done with it.
+
+```cmd
+# Remove a feature worktree
+wt-remove AI-1234-feature
+
+# Remove a hotfix worktree
+wt-remove critical-fix
+
+# Force remove (with uncommitted changes)
+wt-remove my-branch --force
+```
+
+**What it does:**
+1. Finds the worktree in `_feature/`, `_hotfix/`, or `_review/`
+2. Removes the worktree
+3. Prunes git references
+4. Tells you how to delete the branch if desired
+
+---
+
 ## Maintenance Commands
 
 ### `wt-status`
@@ -259,6 +281,7 @@ wt-cleanup
 | `wt-hotfix <name>` | New hotfix branch | `wt-hotfix urgent-fix` |
 | `wt-review <pr#>` | Review a PR | `wt-review 123` |
 | `wt-review-done` | Done reviewing | `wt-review-done` |
+| `wt-remove <name>` | Remove a worktree | `wt-remove AI-1234-thing` |
 | `wt-status` | Status of all repos | `wt-status` |
 | `wt-cleanup` | Clean stale worktrees | `wt-cleanup --dry-run` |
 

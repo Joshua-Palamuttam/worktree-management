@@ -38,6 +38,17 @@ print_error() {
     echo -e "${RED}✗${NC} $1"
 }
 
+# Convert HTTPS URL to SSH for better authentication
+convert_to_ssh() {
+    local url=$1
+    # Convert https://github.com/org/repo.git to git@github.com:org/repo.git
+    if [[ "$url" =~ ^https://github\.com/(.+)$ ]]; then
+        echo "git@github.com:${BASH_REMATCH[1]}"
+    else
+        echo "$url"
+    fi
+}
+
 show_usage() {
     cat << EOF
 Usage: wt-migrate <mode> <source> [repo_name]
@@ -159,6 +170,9 @@ migrate_from_dir() {
         print_error "No 'origin' remote found in source repo"
         exit 1
     fi
+
+    # Convert HTTPS to SSH for authentication
+    remote_url=$(convert_to_ssh "$remote_url")
     print_success "Remote URL: $remote_url"
 
     # Ensure worktree root exists
@@ -207,6 +221,9 @@ migrate_from_url() {
         print_warning "URL doesn't end with .git - appending..."
         url="${url}.git"
     fi
+
+    # Convert HTTPS to SSH for authentication
+    url=$(convert_to_ssh "$url")
 
     # Auto-detect repo name if not provided
     if [ -z "$repo_name" ]; then
