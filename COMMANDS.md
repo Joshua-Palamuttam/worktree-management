@@ -153,6 +153,20 @@ wt-hotfix payment-issue
 
 ---
 
+### `wt-hotfix-done`
+Clean up a hotfix worktree after merging.
+
+```cmd
+wt-hotfix-done critical-bug-fix
+wt-hotfix-done payment-issue
+```
+
+**What it does:**
+1. Removes the `_hotfix/<name>/` worktree
+2. Prunes git worktree references
+
+---
+
 ## Code Review Commands
 
 ### `wt-review`
@@ -279,6 +293,7 @@ wt-cleanup
 | `wt-migrate --from-dir <path>` | Setup repo from local | `wt-migrate --from-dir "C:\code\repo"` |
 | `wt-feature <name>` | New feature branch | `wt-feature AI-1234-thing` |
 | `wt-hotfix <name>` | New hotfix branch | `wt-hotfix urgent-fix` |
+| `wt-hotfix-done <name>` | Remove hotfix worktree | `wt-hotfix-done urgent-fix` |
 | `wt-review <pr#>` | Review a PR | `wt-review 123` |
 | `wt-review-done` | Done reviewing | `wt-review-done` |
 | `wt-remove <name>` | Remove a worktree | `wt-remove AI-1234-thing` |
