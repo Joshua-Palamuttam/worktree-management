@@ -6,6 +6,51 @@ All commands work in both **Git Bash** and **Windows Command Prompt**.
 
 ## Navigation Commands
 
+### `wtn`
+Interactive worktree navigation with smart flow and partial matching.
+
+```cmd
+wtn
+```
+
+**Smart flow:**
+- If already in a repo: skips repo selection, shows worktree menu
+- If not in a repo: shows repo selection first, then worktree menu
+
+**Example session:**
+```
+$ wtn
+
+Select repository:
+
+  1) AI-1099
+  2) backend
+  3) integrations
+
+Choice (number or text to filter): AI
+
+In repo: AI-1099
+
+Select worktree:
+
+  1) main
+  2) develop
+  3) my-feature (feature)
+  4) critical-fix (hotfix)
+
+Choice (number or text to filter): feat
+
+C:\worktrees-SeekOut\AI-1099.git\_feature\my-feature
+```
+
+**Features:**
+- Type a number to select directly
+- Type text to filter the list (case insensitive)
+- If filter matches exactly one item, it's selected automatically
+- Press Enter with no input to cancel
+
+---
+
 ### `wtgo`
 Jump to the worktrees root directory.
 
@@ -297,6 +342,7 @@ wt-cleanup
 
 | Command | Description | Example |
 |---------|-------------|---------|
+| `wtn` | Interactive navigation (smart flow) | `wtn` |
 | `wtgo` | Go to worktrees root | `wtgo` |
 | `wtr` | List repos | `wtr` |
 | `wtr <repo>` | Go to repo | `wtr backend` |

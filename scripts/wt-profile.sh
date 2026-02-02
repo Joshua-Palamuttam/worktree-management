@@ -113,6 +113,11 @@ wtl() {
     git worktree list
 }
 
+# Interactive navigation
+wtn() {
+    source "$WORKTREE_SCRIPTS/wtn.sh"
+}
+
 # ============================================================
 # Hotfix Workflow
 # ============================================================
