@@ -84,7 +84,7 @@ wt-status
 
 | Command | Description |
 |---------|-------------|
-| `wt` | Jump to worktree root |
+| `wtgo` | Jump to worktree root |
 | `wtr <repo>` | Jump to repo (tab completion) |
 | `wtd [repo]` | Jump to develop worktree |
 | `wtm [repo]` | Jump to main worktree |

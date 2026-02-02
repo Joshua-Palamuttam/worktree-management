@@ -61,7 +61,7 @@ wt-migrate() {
 # ============================================================
 
 # Jump to worktree root
-wt() {
+wtgo() {
     cd "$WORKTREE_ROOT"
 }
 

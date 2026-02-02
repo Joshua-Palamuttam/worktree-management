@@ -6,11 +6,11 @@ All commands work in both **Git Bash** and **Windows Command Prompt**.
 
 ## Navigation Commands
 
-### `wt`
+### `wtgo`
 Jump to the worktrees root directory.
 
 ```cmd
-wt
+wtgo
 ```
 **Result:** Changes directory to `C:\worktrees-SeekOut\`
 
@@ -247,7 +247,7 @@ wt-cleanup
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `wt` | Go to worktrees root | `wt` |
+| `wtgo` | Go to worktrees root | `wtgo` |
 | `wtr` | List repos | `wtr` |
 | `wtr <repo>` | Go to repo | `wtr backend` |
 | `wtd` | Go to develop | `wtd` |
