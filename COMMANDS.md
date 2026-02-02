@@ -211,21 +211,31 @@ wt-review-done
 Remove a feature, hotfix, or any worktree when you're done with it.
 
 ```cmd
-# Remove a feature worktree
+# Remove a feature worktree (prompts about branch deletion)
 wt-remove AI-1234-feature
 
-# Remove a hotfix worktree
-wt-remove critical-fix
+# Remove worktree AND delete the branch
+wt-remove AI-1234-feature --delete-branch
+wt-remove AI-1234-feature -d
+
+# Remove worktree but keep the branch (no prompt)
+wt-remove AI-1234-feature --keep-branch
+wt-remove AI-1234-feature -k
 
 # Force remove (with uncommitted changes)
 wt-remove my-branch --force
 ```
 
+**Options:**
+- `--force`, `-f` - Force remove even with uncommitted changes
+- `--delete-branch`, `-d` - Also delete the local branch (no prompt)
+- `--keep-branch`, `-k` - Keep the local branch (no prompt)
+
 **What it does:**
 1. Finds the worktree in `_feature/`, `_hotfix/`, or `_review/`
 2. Removes the worktree
 3. Prunes git references
-4. Tells you how to delete the branch if desired
+4. Prompts to delete the branch (unless `-d` or `-k` specified)
 
 ---
 
@@ -296,7 +306,8 @@ wt-cleanup
 | `wt-hotfix-done <name>` | Remove hotfix worktree | `wt-hotfix-done urgent-fix` |
 | `wt-review <pr#>` | Review a PR | `wt-review 123` |
 | `wt-review-done` | Done reviewing | `wt-review-done` |
-| `wt-remove <name>` | Remove a worktree | `wt-remove AI-1234-thing` |
+| `wt-remove <name>` | Remove worktree (prompts for branch) | `wt-remove AI-1234-thing` |
+| `wt-remove <name> -d` | Remove worktree and branch | `wt-remove AI-1234-thing -d` |
 | `wt-status` | Status of all repos | `wt-status` |
 | `wt-cleanup` | Clean stale worktrees | `wt-cleanup --dry-run` |
 

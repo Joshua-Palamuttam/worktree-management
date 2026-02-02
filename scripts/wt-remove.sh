@@ -1,12 +1,13 @@
 #!/bin/bash
 # wt-remove.sh - Remove a worktree
-# Usage: wt-remove <worktree_name> [--force]
+# Usage: wt-remove <worktree_name> [--force] [--delete-branch | --keep-branch]
 
 set -e
 
 worktree_name=""
 force_flag=""
 workdir=""
+delete_branch=""  # empty = prompt, "yes" = delete, "no" = keep
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -16,6 +17,14 @@ while [[ $# -gt 0 ]]; do
             ;;
         --force|-f)
             force_flag="--force"
+            shift
+            ;;
+        --delete-branch|-d)
+            delete_branch="yes"
+            shift
+            ;;
+        --keep-branch|-k)
+            delete_branch="no"
             shift
             ;;
         *)
@@ -28,12 +37,18 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ -z "$worktree_name" ]; then
-    echo "Usage: wt-remove <worktree_name> [--force]"
+    echo "Usage: wt-remove <worktree_name> [--force] [--delete-branch | --keep-branch]"
+    echo ""
+    echo "Options:"
+    echo "  --force, -f          Force remove even with uncommitted changes"
+    echo "  --delete-branch, -d  Also delete the local branch"
+    echo "  --keep-branch, -k    Keep the local branch (no prompt)"
     echo ""
     echo "Examples:"
-    echo "  wt-remove AI-1234-feature      # Remove _feature/AI-1234-feature"
-    echo "  wt-remove hotfix/critical      # Remove _hotfix/critical"
-    echo "  wt-remove my-branch --force    # Force remove with uncommitted changes"
+    echo "  wt-remove AI-1234-feature           # Remove and prompt about branch"
+    echo "  wt-remove AI-1234-feature -d        # Remove worktree and delete branch"
+    echo "  wt-remove AI-1234-feature -k        # Remove worktree, keep branch"
+    echo "  wt-remove my-branch --force         # Force remove with uncommitted changes"
     echo ""
     echo "Current worktrees:"
     git worktree list
@@ -92,9 +107,25 @@ git worktree prune
 
 echo "✅ Worktree removed: $worktree_path"
 
-# Offer to delete the branch
+# Handle branch deletion
 if [ -n "$branch_name" ] && [ "$branch_name" != "main" ] && [ "$branch_name" != "master" ] && [ "$branch_name" != "develop" ]; then
-    echo ""
-    echo "The local branch '$branch_name' still exists."
-    echo "To delete it: git branch -D $branch_name"
+    if [ "$delete_branch" = "yes" ]; then
+        # Delete branch automatically
+        echo "🗑️  Deleting branch: $branch_name"
+        git branch -D "$branch_name" 2>/dev/null || echo "⚠️  Could not delete branch (may not exist locally)"
+    elif [ "$delete_branch" = "no" ]; then
+        # Keep branch, no prompt
+        echo "📌 Keeping local branch: $branch_name"
+    else
+        # Interactive prompt
+        echo ""
+        echo "The local branch '$branch_name' still exists."
+        read -p "Delete the branch? [y/N] " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            git branch -D "$branch_name" 2>/dev/null && echo "✅ Branch deleted: $branch_name" || echo "⚠️  Could not delete branch"
+        else
+            echo "📌 Keeping branch: $branch_name"
+        fi
+    fi
 fi
