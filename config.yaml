@@ -1,0 +1,102 @@
+# Worktree Management Configuration
+# Registry of all repositories managed with worktree workflow
+
+worktree_root: "C:/worktrees-SeekOut"
+
+# Default worktrees to create for each repo type
+defaults:
+  standard:
+    - main
+    - develop
+  simple:
+    - main
+
+# Repository registry
+repos:
+  # AI/ML Projects
+  - name: AI-1099
+    url: https://github.com/Zipstorm/AI-1099.git
+    default_base: develop
+    type: standard
+    description: "AI 1099 main application"
+
+  - name: agents
+    url: https://github.com/Zipstorm/agents.git
+    default_base: develop
+    type: standard
+    description: "AI agents codebase"
+
+  # Backend Services
+  - name: backend
+    url: https://github.com/Zipstorm/backend.git
+    default_base: develop
+    type: standard
+    description: "Main backend services"
+
+  - name: backend-e2e
+    url: https://github.com/Zipstorm/backend-e2e.git
+    default_base: develop
+    type: standard
+    description: "Backend E2E tests"
+
+  - name: recruit-api
+    url: https://github.com/Zipstorm/recruit-api.git
+    default_base: develop
+    type: standard
+    description: "Recruitment API"
+
+  # Integrations
+  - name: integrations
+    url: https://github.com/Zipstorm/integrations.git
+    default_base: main
+    type: standard
+    description: "Third-party integrations"
+
+  - name: integrations-databricks
+    url: https://github.com/Zipstorm/integrations-databricks.git
+    default_base: main
+    type: simple
+    description: "Databricks integrations"
+
+  # Analytics
+  - name: analytics-api
+    url: https://github.com/Zipstorm/analytics-api.git
+    default_base: develop
+    type: standard
+    description: "Analytics API"
+
+  - name: analytics-functions
+    url: https://github.com/Zipstorm/analytics-functions.git
+    default_base: main
+    type: simple
+    description: "Analytics Azure Functions"
+
+  # UI
+  - name: ui-1099
+    url: https://github.com/Zipstorm/ui-1099.git
+    default_base: develop
+    type: standard
+    description: "AI 1099 UI"
+
+  # Other
+  - name: spot-messaging
+    url: https://github.com/Zipstorm/spot-messaging.git
+    default_base: main
+    type: simple
+    description: "Spot messaging service"
+
+# Migration tracking
+migration:
+  completed: []
+  pending:
+    - AI-1099
+    - agents
+    - backend
+    - backend-e2e
+    - recruit-api
+    - integrations
+    - integrations-databricks
+    - analytics-api
+    - analytics-functions
+    - ui-1099
+    - spot-messaging
