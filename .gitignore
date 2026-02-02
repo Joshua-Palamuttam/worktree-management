@@ -11,5 +11,6 @@ Thumbs.db
 *.local.yaml
 secrets/
 
-# Machine-specific config (created by setup.cmd)
+# Machine-specific config (created by setup.cmd/setup.sh)
 bin/wt-config.cmd
+scripts/wt-config.sh
