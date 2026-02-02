@@ -154,7 +154,7 @@ wt-review-done
 
 | Command | Description |
 |---------|-------------|
-| `wt` | Jump to `C:\worktrees-SeekOut\` |
+| `wtgo` | Jump to `C:\worktrees-SeekOut\` |
 | `wtr <repo>` | Jump to a repo's bare directory |
 | `wtr` | List all available repos |
 | `wtd [repo]` | Jump to develop worktree |
