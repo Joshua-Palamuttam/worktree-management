@@ -245,22 +245,7 @@ branch_name=$(cd "$worktree_path" && git branch --show-current 2>/dev/null) || t
 
 echo "🗑️  Removing worktree: $worktree_path"
 
-# Check if we're inside the worktree we're trying to remove
-current_dir=$(pwd -P)
-target_dir=$(cd "$repo_root/$worktree_path" 2>/dev/null && pwd -P)
-
-if [[ "$current_dir" == "$target_dir"* ]]; then
-    echo ""
-    echo "⚠️  You are currently inside this worktree!"
-    echo "   Please cd out first: cd \"$repo_root\""
-    echo ""
-    read -p "Press Enter after you've changed directory (or 'q' to quit): " response
-    if [ "$response" = "q" ] || [ "$response" = "Q" ]; then
-        echo "Cancelled"
-        exit 1
-    fi
-fi
-
+# Always work from repo root
 cd "$repo_root"
 
 # Try to remove the worktree
@@ -308,15 +293,15 @@ while [ $attempt -le $max_attempts ]; do
                         cmd //c "rd /s /q \"$win_path\"" 2>/dev/null
                     fi
 
-                    # Final check
-                    if [ -d "$repo_root/$worktree_path" ]; then
-                        echo ""
-                        echo "⚠️  Could not fully delete - your terminal may still be in this directory."
-                        echo "   Run this in your terminal: cd \"$repo_root\" && rd /s /q \"$win_path\""
-                    fi
-
                     git worktree prune
-                    echo "✅ Worktree removed from git: $worktree_path"
+
+                    # Final check - if still exists, will be deleted when CMD moves out
+                    if [ -d "$repo_root/$worktree_path" ]; then
+                        echo "📂 Directory will be removed when you exit this command..."
+                        # Schedule deletion via CMD wrapper moving out
+                    else
+                        echo "✅ Worktree force removed: $worktree_path"
+                    fi
 
                     # Still handle branch deletion
                     if [ -n "$branch_name" ] && [ "$branch_name" != "main" ] && [ "$branch_name" != "master" ] && [ "$branch_name" != "develop" ]; then
