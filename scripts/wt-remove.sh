@@ -80,13 +80,25 @@ get_removable_worktrees() {
     printf '%s\n' "${worktrees[@]}"
 }
 
+# Get list of valid worktrees from git
+get_valid_worktrees() {
+    git worktree list --porcelain | grep "^worktree " | sed 's/^worktree //'
+}
+
+# Check if a path is a valid worktree
+is_valid_worktree() {
+    local path="$1"
+    local abs_path=$(cd "$path" 2>/dev/null && pwd -P)
+    get_valid_worktrees | grep -qF "$abs_path"
+}
+
 # Interactive selection if no worktree specified
 if [ -z "$worktree_name" ]; then
     echo ""
     echo "Select worktree to remove:"
     echo ""
 
-    # Build list of removable worktrees
+    # Build list of removable worktrees (only valid ones)
     declare -a worktrees
     declare -a worktree_paths
     count=0
@@ -94,7 +106,7 @@ if [ -z "$worktree_name" ]; then
     # Feature worktrees
     if [ -d "_feature" ]; then
         for d in "_feature"/*/; do
-            if [ -d "$d" ]; then
+            if [ -d "$d" ] && is_valid_worktree "$d"; then
                 name=$(basename "$d")
                 ((count++))
                 worktrees[$count]="$name"
@@ -107,7 +119,7 @@ if [ -z "$worktree_name" ]; then
     # Hotfix worktrees
     if [ -d "_hotfix" ]; then
         for d in "_hotfix"/*/; do
-            if [ -d "$d" ]; then
+            if [ -d "$d" ] && is_valid_worktree "$d"; then
                 name=$(basename "$d")
                 ((count++))
                 worktrees[$count]="$name"
@@ -120,7 +132,7 @@ if [ -z "$worktree_name" ]; then
     # Review worktrees
     if [ -d "_review" ]; then
         for d in "_review"/*/; do
-            if [ -d "$d" ]; then
+            if [ -d "$d" ] && is_valid_worktree "$d"; then
                 name=$(basename "$d")
                 ((count++))
                 worktrees[$count]="$name"
@@ -132,6 +144,21 @@ if [ -z "$worktree_name" ]; then
 
     if [ $count -eq 0 ]; then
         echo "  No removable worktrees found (main/develop are protected)"
+
+        # Check for orphaned directories
+        orphans=0
+        for dir in "_feature" "_hotfix" "_review"; do
+            if [ -d "$dir" ]; then
+                for d in "$dir"/*/; do
+                    [ -d "$d" ] && ((orphans++))
+                done
+            fi
+        done
+
+        if [ $orphans -gt 0 ]; then
+            echo ""
+            echo "  Found $orphans orphaned directories. Run 'git worktree prune' and remove manually."
+        fi
         exit 0
     fi
 
@@ -195,6 +222,21 @@ else
         echo "Available worktrees:"
         git worktree list
         exit 1
+    fi
+
+    # Check if it's a valid worktree or just an orphaned directory
+    if ! is_valid_worktree "$worktree_path"; then
+        echo "⚠️  '$worktree_path' is an orphaned directory (not a registered worktree)"
+        read -p "Delete the directory anyway? [y/N] " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            rm -rf "$worktree_path"
+            git worktree prune
+            echo "✅ Orphaned directory removed: $worktree_path"
+        else
+            echo "Cancelled"
+        fi
+        exit 0
     fi
 fi
 
