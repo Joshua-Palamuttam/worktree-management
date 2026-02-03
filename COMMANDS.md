@@ -220,6 +220,52 @@ wt-hotfix-done payment-issue
 
 ---
 
+### `wt-sync`
+Sync the current branch with develop (or another target branch).
+
+```cmd
+# Rebase current branch onto origin/develop (default)
+wt-sync
+
+# Merge origin/develop into current branch
+wt-sync --merge
+
+# Sync with a different branch
+wt-sync main
+wt-sync main --merge
+```
+
+**What it does:**
+1. Fetches latest from origin
+2. If on target branch: pulls latest
+3. Otherwise: rebases (default) or merges the target branch into current branch
+4. If you have uncommitted changes, offers to stash them first
+
+**Options:**
+- `--rebase` - Rebase onto target (default, cleaner history)
+- `--merge` - Merge target into current branch (preserves merge commits)
+
+**Conflict handling:**
+If conflicts occur during rebase:
+```cmd
+# Fix conflicts, then:
+git rebase --continue
+
+# Or abort:
+git rebase --abort
+```
+
+If conflicts occur during merge:
+```cmd
+# Fix conflicts, then:
+git commit
+
+# Or abort:
+git merge --abort
+```
+
+---
+
 ## Code Review Commands
 
 ### `wt-review`
@@ -379,6 +425,8 @@ wt-cleanup
 | `wt-feature <name>` | New feature branch | `wt-feature AI-1234-thing` |
 | `wt-hotfix <name>` | New hotfix branch | `wt-hotfix urgent-fix` |
 | `wt-hotfix-done <name>` | Remove hotfix worktree | `wt-hotfix-done urgent-fix` |
+| `wt-sync` | Sync branch with develop | `wt-sync` |
+| `wt-sync <branch>` | Sync with specific branch | `wt-sync main --merge` |
 | `wt-review <pr#>` | Review a PR | `wt-review 123` |
 | `wt-review-done` | Done reviewing | `wt-review-done` |
 | `wt-remove` | Interactive worktree removal | `wt-remove` |
@@ -421,6 +469,15 @@ git push -u origin hotfix/payment-broken
 # Create PR, merge, then cleanup:
 cd ..
 git worktree remove _hotfix/payment-broken
+```
+
+### Keeping Feature Branch Up to Date
+```cmd
+# Working on a feature for a few days? Sync with develop regularly
+wt-sync                  # Rebase your feature onto latest develop
+
+# If you prefer merge commits
+wt-sync --merge          # Merge develop into your feature
 ```
 
 ### Morning Status Check

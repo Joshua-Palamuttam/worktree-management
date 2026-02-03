@@ -135,6 +135,11 @@ wt-hotfix-done() {
     bash "$WORKTREE_SCRIPTS/wt-hotfix-done.sh" "$@"
 }
 
+# Sync current branch with develop (or another branch)
+wt-sync() {
+    bash "$WORKTREE_SCRIPTS/wt-sync.sh" "$@"
+}
+
 # ============================================================
 # Tab Completion (Bash)
 # ============================================================
