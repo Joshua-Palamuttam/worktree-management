@@ -261,7 +261,7 @@ remove_worktree() {
 }
 
 # Attempt removal with retry logic for file locking
-max_attempts=3
+max_attempts=2
 attempt=1
 
 while [ $attempt -le $max_attempts ]; do
@@ -282,21 +282,59 @@ while [ $attempt -le $max_attempts ]; do
         echo ""
 
         if [ $attempt -lt $max_attempts ]; then
-            read -p "Close any programs using this folder and press Enter to retry (or 'q' to quit): " retry
-            if [ "$retry" = "q" ] || [ "$retry" = "Q" ]; then
-                echo "Cancelled"
-                exit 1
-            fi
-            ((attempt++))
+            read -p "[R]etry, [F]orce delete, or [Q]uit? " -n 1 -r
+            echo
+            case $REPLY in
+                [Ff])
+                    echo "🔨 Force deleting directory..."
+                    rm -rf "$repo_root/$worktree_path" 2>/dev/null || {
+                        # Try Windows command if rm fails
+                        cmd //c "rd /s /q \"$(echo "$repo_root/$worktree_path" | sed 's|/|\\|g')\"" 2>/dev/null
+                    }
+                    git worktree prune
+                    echo "✅ Worktree force removed: $worktree_path"
+
+                    # Still handle branch deletion
+                    if [ -n "$branch_name" ] && [ "$branch_name" != "main" ] && [ "$branch_name" != "master" ] && [ "$branch_name" != "develop" ]; then
+                        if [ "$delete_branch" = "yes" ]; then
+                            echo "🗑️  Deleting branch: $branch_name"
+                            git branch -D "$branch_name" 2>/dev/null || true
+                        elif [ "$delete_branch" != "no" ]; then
+                            echo ""
+                            echo "The local branch '$branch_name' still exists."
+                            read -p "Delete the branch? [y/N] " -n 1 -r
+                            echo
+                            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                                git branch -D "$branch_name" 2>/dev/null && echo "✅ Branch deleted: $branch_name" || true
+                            fi
+                        fi
+                    fi
+                    exit 0
+                    ;;
+                [Qq])
+                    echo "Cancelled"
+                    exit 1
+                    ;;
+                *)
+                    ((attempt++))
+                    ;;
+            esac
         else
             echo ""
             echo "❌ Could not remove worktree after $max_attempts attempts."
             echo ""
-            echo "Manual removal:"
-            echo "  1. Close all programs using: $repo_root/$worktree_path"
-            echo "  2. Run: rd /s /q \"$repo_root/$worktree_path\""
-            echo "  3. Run: git worktree prune"
-            exit 1
+            read -p "Force delete the directory? [y/N] " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                rm -rf "$repo_root/$worktree_path" 2>/dev/null || {
+                    cmd //c "rd /s /q \"$(echo "$repo_root/$worktree_path" | sed 's|/|\\|g')\"" 2>/dev/null
+                }
+                git worktree prune
+                echo "✅ Worktree force removed: $worktree_path"
+                break
+            else
+                exit 1
+            fi
         fi
     else
         # Some other error
