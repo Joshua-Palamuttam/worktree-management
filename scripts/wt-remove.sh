@@ -250,6 +250,15 @@ cd "$repo_root"
 
 # Try to remove the worktree
 remove_worktree() {
+    # Check if it's still a registered worktree
+    if ! is_valid_worktree "$worktree_path"; then
+        # Already unregistered, just need to delete directory
+        if [ -d "$repo_root/$worktree_path" ]; then
+            rm -rf "$repo_root/$worktree_path" 2>&1
+            return $?
+        fi
+        return 0
+    fi
     git worktree remove "$worktree_path" $force_flag 2>&1
     return $?
 }
