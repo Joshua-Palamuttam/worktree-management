@@ -221,25 +221,46 @@ wt-hotfix-done payment-issue
 ---
 
 ### `wt-sync`
-Sync the current branch with develop (or another target branch).
+Sync a branch with develop (or another target branch). Supports interactive selection.
 
 ```cmd
-# Rebase current branch onto origin/develop (default)
+# Interactive mode - select which branch to sync
 wt-sync
 
-# Merge origin/develop into current branch
+# Interactive with merge strategy
 wt-sync --merge
 
-# Sync with a different branch
-wt-sync main
-wt-sync main --merge
+# Sync a specific branch with develop
+wt-sync my-feature
+
+# Sync a specific branch with main
+wt-sync my-feature main
 ```
+
+**Interactive mode:**
+```
+$ wt-sync
+
+📁 Repo: AI-1099
+
+Select branch to sync with develop:
+
+  1) AI-1234-new-feature (feature)
+  2) AI-5678-bugfix (feature)
+  3) critical-fix (hotfix)
+
+Choice (number or text to filter): 1
+```
+
+**Smart flow:**
+- If not in a repo: shows repo selection first
+- Then shows list of feature/hotfix/review branches to sync
+- Type a number to select, or text to filter
 
 **What it does:**
 1. Fetches latest from origin
-2. If on target branch: pulls latest
-3. Otherwise: rebases (default) or merges the target branch into current branch
-4. If you have uncommitted changes, offers to stash them first
+2. Rebases (default) or merges the target branch into selected branch
+3. If you have uncommitted changes, offers to stash them first
 
 **Options:**
 - `--rebase` - Rebase onto target (default, cleaner history)
