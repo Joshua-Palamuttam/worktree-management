@@ -203,6 +203,15 @@ branch_name=$(cd "$worktree_path" && git branch --show-current 2>/dev/null) || t
 
 echo "🗑️  Removing worktree: $worktree_path"
 
+# Check if we're inside the worktree we're trying to remove
+current_dir=$(pwd -P)
+target_dir=$(cd "$worktree_path" 2>/dev/null && pwd -P)
+
+if [[ "$current_dir" == "$target_dir"* ]]; then
+    echo "📂 Moving out of worktree first..."
+    cd "$repo_root"
+fi
+
 # Try to remove the worktree
 remove_worktree() {
     git worktree remove "$worktree_path" $force_flag 2>&1
