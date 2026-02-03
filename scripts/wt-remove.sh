@@ -247,12 +247,21 @@ echo "🗑️  Removing worktree: $worktree_path"
 
 # Check if we're inside the worktree we're trying to remove
 current_dir=$(pwd -P)
-target_dir=$(cd "$worktree_path" 2>/dev/null && pwd -P)
+target_dir=$(cd "$repo_root/$worktree_path" 2>/dev/null && pwd -P)
 
 if [[ "$current_dir" == "$target_dir"* ]]; then
-    echo "📂 Moving out of worktree first..."
-    cd "$repo_root"
+    echo ""
+    echo "⚠️  You are currently inside this worktree!"
+    echo "   Please cd out first: cd \"$repo_root\""
+    echo ""
+    read -p "Press Enter after you've changed directory (or 'q' to quit): " response
+    if [ "$response" = "q" ] || [ "$response" = "Q" ]; then
+        echo "Cancelled"
+        exit 1
+    fi
 fi
+
+cd "$repo_root"
 
 # Try to remove the worktree
 remove_worktree() {
@@ -287,12 +296,27 @@ while [ $attempt -le $max_attempts ]; do
             case $REPLY in
                 [Ff])
                     echo "🔨 Force deleting directory..."
-                    rm -rf "$repo_root/$worktree_path" 2>/dev/null || {
-                        # Try Windows command if rm fails
-                        cmd //c "rd /s /q \"$(echo "$repo_root/$worktree_path" | sed 's|/|\\|g')\"" 2>/dev/null
-                    }
+
+                    # Convert path for Windows
+                    win_path=$(echo "$repo_root/$worktree_path" | sed 's|^/c/|C:/|i; s|^/d/|D:/|i; s|/|\\|g')
+
+                    # Try multiple delete methods
+                    rm -rf "$repo_root/$worktree_path" 2>/dev/null
+
+                    # Check if still exists, try Windows commands
+                    if [ -d "$repo_root/$worktree_path" ]; then
+                        cmd //c "rd /s /q \"$win_path\"" 2>/dev/null
+                    fi
+
+                    # Final check
+                    if [ -d "$repo_root/$worktree_path" ]; then
+                        echo ""
+                        echo "⚠️  Could not fully delete - your terminal may still be in this directory."
+                        echo "   Run this in your terminal: cd \"$repo_root\" && rd /s /q \"$win_path\""
+                    fi
+
                     git worktree prune
-                    echo "✅ Worktree force removed: $worktree_path"
+                    echo "✅ Worktree removed from git: $worktree_path"
 
                     # Still handle branch deletion
                     if [ -n "$branch_name" ] && [ "$branch_name" != "main" ] && [ "$branch_name" != "master" ] && [ "$branch_name" != "develop" ]; then
@@ -326,11 +350,16 @@ while [ $attempt -le $max_attempts ]; do
             read -p "Force delete the directory? [y/N] " -n 1 -r
             echo
             if [[ $REPLY =~ ^[Yy]$ ]]; then
-                rm -rf "$repo_root/$worktree_path" 2>/dev/null || {
-                    cmd //c "rd /s /q \"$(echo "$repo_root/$worktree_path" | sed 's|/|\\|g')\"" 2>/dev/null
-                }
+                win_path=$(echo "$repo_root/$worktree_path" | sed 's|^/c/|C:/|i; s|^/d/|D:/|i; s|/|\\|g')
+                rm -rf "$repo_root/$worktree_path" 2>/dev/null
+                if [ -d "$repo_root/$worktree_path" ]; then
+                    cmd //c "rd /s /q \"$win_path\"" 2>/dev/null
+                fi
+                if [ -d "$repo_root/$worktree_path" ]; then
+                    echo "⚠️  Could not fully delete - run: cd \"$repo_root\" && rd /s /q \"$win_path\""
+                fi
                 git worktree prune
-                echo "✅ Worktree force removed: $worktree_path"
+                echo "✅ Worktree removed from git: $worktree_path"
                 break
             else
                 exit 1
