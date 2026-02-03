@@ -113,9 +113,9 @@ wtl() {
     git worktree list
 }
 
-# Interactive navigation
+# Interactive navigation (use -c to launch Claude Code after)
 wtn() {
-    source "$WORKTREE_SCRIPTS/wtn.sh"
+    source "$WORKTREE_SCRIPTS/wtn.sh" "$@"
 }
 
 # ============================================================

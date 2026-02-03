@@ -4,6 +4,29 @@ call "%~dp0wt-config.cmd"
 
 set "REPO_PATH="
 set "REPO_NAME="
+set "LAUNCH_CODE=0"
+
+REM Parse arguments
+:parse_args
+if "%~1"=="" goto :done_args
+if "%~1"=="--code" set "LAUNCH_CODE=1" & shift & goto :parse_args
+if "%~1"=="-c" set "LAUNCH_CODE=1" & shift & goto :parse_args
+if "%~1"=="--help" goto :show_help
+if "%~1"=="-h" goto :show_help
+shift
+goto :parse_args
+
+:show_help
+echo Usage: wtn [options]
+echo.
+echo Interactive worktree navigation.
+echo.
+echo Options:
+echo   --code, -c    Launch Claude Code after navigating
+echo   --help, -h    Show this help message
+goto :eof
+
+:done_args
 
 REM Check if we're in a repo already
 for /f "delims=" %%R in ('git rev-parse --git-common-dir 2^>nul') do set "GIT_DIR=%%R"
@@ -180,6 +203,8 @@ if !MATCHES!==0 (
 goto :select_worktree
 
 :navigate
-endlocal & cd /d "%DEST%"
-echo.
-echo %CD%
+if !LAUNCH_CODE!==1 (
+    endlocal & cd /d "%DEST%" & echo. & echo %CD% & echo. & echo Launching Claude Code... & claude
+) else (
+    endlocal & cd /d "%DEST%" & echo. & echo %CD%
+)

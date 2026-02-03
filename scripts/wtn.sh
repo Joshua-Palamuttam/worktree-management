@@ -5,13 +5,43 @@
 #   - If in a repo: show worktree selection
 #   - If not in a repo: show repo selection first, then worktree
 #
+# Options:
+#   --code, -c    Launch Claude Code after navigating
+#
 # Supports partial input filtering (type text to filter, number to select)
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/wt-config.sh" 2>/dev/null || {
-    echo "Run setup.sh first to configure paths"
-    return 1 2>/dev/null || exit 1
-}
+
+# Try to load config, or compute defaults
+if [ -f "$SCRIPT_DIR/wt-config.sh" ]; then
+    source "$SCRIPT_DIR/wt-config.sh"
+else
+    export WORKTREE_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+fi
+
+# Parse arguments
+LAUNCH_CODE=false
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --code|-c)
+            LAUNCH_CODE=true
+            shift
+            ;;
+        --help|-h)
+            echo "Usage: wtn [options]"
+            echo ""
+            echo "Interactive worktree navigation."
+            echo ""
+            echo "Options:"
+            echo "  --code, -c    Launch Claude Code after navigating"
+            echo "  --help, -h    Show this help message"
+            return 0 2>/dev/null || exit 0
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
 
 # Function to display menu and get selection
 # Usage: select_from_menu "prompt" item1 item2 item3 ...
@@ -136,6 +166,13 @@ navigate_to_worktree() {
     fi
 
     echo "📂 $(pwd)"
+
+    # Launch Claude Code if requested
+    if [ "$LAUNCH_CODE" = true ]; then
+        echo ""
+        echo "🚀 Launching Claude Code..."
+        claude
+    fi
 }
 
 # Main logic

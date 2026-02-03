@@ -10,8 +10,13 @@ All commands work in both **Git Bash** and **Windows Command Prompt**.
 Interactive worktree navigation with smart flow and partial matching.
 
 ```cmd
-wtn
+wtn              # Navigate to a worktree
+wtn --code       # Navigate and launch Claude Code
+wtn -c           # Short form
 ```
+
+**Options:**
+- `--code`, `-c` - Launch Claude Code after navigating to the worktree
 
 **Smart flow:**
 - If already in a repo: skips repo selection, shows worktree menu
@@ -435,6 +440,7 @@ wt-cleanup
 | Command | Description | Example |
 |---------|-------------|---------|
 | `wtn` | Interactive navigation (smart flow) | `wtn` |
+| `wtn -c` | Navigate + launch Claude Code | `wtn --code` |
 | `wtgo` | Go to worktrees root | `wtgo` |
 | `wtr` | List repos | `wtr` |
 | `wtr <repo>` | Go to repo | `wtr backend` |
