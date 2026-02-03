@@ -34,18 +34,18 @@ git fetch origin
 default_branch=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
 echo "📌 Default branch detected: ${default_branch}"
 
-# Create main/master worktree
+# Create main/master worktree (with local branch tracking remote)
 echo "🌳 Creating main worktree..."
 if git show-ref --verify --quiet "refs/remotes/origin/main"; then
-    git worktree add main origin/main
+    git worktree add --track -b main main origin/main
 elif git show-ref --verify --quiet "refs/remotes/origin/master"; then
-    git worktree add main origin/master
+    git worktree add --track -b main main origin/master
 fi
 
-# Create develop worktree if it exists
+# Create develop worktree if it exists (with local branch tracking remote)
 if git show-ref --verify --quiet "refs/remotes/origin/develop"; then
     echo "🌳 Creating develop worktree..."
-    git worktree add develop origin/develop
+    git worktree add --track -b develop develop origin/develop
 fi
 
 # Create empty directories for feature and review worktrees

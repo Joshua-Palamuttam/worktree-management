@@ -94,23 +94,23 @@ create_worktrees() {
 
     local default_branch=$(detect_default_branch)
 
-    # Create main/master worktree
+    # Create main/master worktree (with local branch tracking remote)
     print_step "Creating main worktree..."
     if git show-ref --verify --quiet "refs/remotes/origin/main"; then
-        git worktree add main origin/main
-        print_success "Created main/ worktree"
+        git worktree add --track -b main main origin/main
+        print_success "Created main/ worktree (tracking origin/main)"
     elif git show-ref --verify --quiet "refs/remotes/origin/master"; then
-        git worktree add main origin/master
-        print_success "Created main/ worktree (from master)"
+        git worktree add --track -b main main origin/master
+        print_success "Created main/ worktree (tracking origin/master)"
     else
         print_warning "No main/master branch found"
     fi
 
-    # Create develop worktree if exists
+    # Create develop worktree if exists (with local branch tracking remote)
     if git show-ref --verify --quiet "refs/remotes/origin/develop"; then
         print_step "Creating develop worktree..."
-        git worktree add develop origin/develop
-        print_success "Created develop/ worktree"
+        git worktree add --track -b develop develop origin/develop
+        print_success "Created develop/ worktree (tracking origin/develop)"
     else
         print_warning "No develop branch found (skipping)"
     fi
