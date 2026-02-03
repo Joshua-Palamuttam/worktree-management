@@ -295,10 +295,10 @@ while [ $attempt -le $max_attempts ]; do
 
                     git worktree prune
 
-                    # Final check - if still exists, will be deleted when CMD moves out
+                    # Final check - write to temp file for CMD wrapper to clean up
                     if [ -d "$repo_root/$worktree_path" ]; then
-                        echo "📂 Directory will be removed when you exit this command..."
-                        # Schedule deletion via CMD wrapper moving out
+                        echo "$win_path" > "$TEMP/wt-remove-cleanup.txt"
+                        echo "📂 Cleaning up after move..."
                     else
                         echo "✅ Worktree force removed: $worktree_path"
                     fi

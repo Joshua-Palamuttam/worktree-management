@@ -19,5 +19,20 @@ set "REPO_ROOT=!REPO_ROOT:\d\=D:\!"
 REM Run the remove script
 "%GIT_BASH%" "%SCRIPTS_PATH%/wt-remove.sh" %* --workdir "!ORIG_DIR!"
 
-REM Move to repo root after removal (so user isn't stuck in deleted directory)
-endlocal & cd /d "%REPO_ROOT%"
+set "FINAL_ROOT=!REPO_ROOT!"
+
+REM Move to repo root, then check for cleanup file
+endlocal & (
+    cd /d "%FINAL_ROOT%"
+
+    if exist "%TEMP%\wt-remove-cleanup.txt" (
+        set /p CLEANUP_PATH=<"%TEMP%\wt-remove-cleanup.txt"
+        del "%TEMP%\wt-remove-cleanup.txt" 2>nul
+
+        setlocal enabledelayedexpansion
+        if not "!CLEANUP_PATH!"=="" (
+            rd /s /q "!CLEANUP_PATH!" 2>nul && echo Removed directory.
+        )
+        endlocal
+    )
+)
