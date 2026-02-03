@@ -260,19 +260,33 @@ wt-review-done
 Remove a feature, hotfix, or any worktree when you're done with it.
 
 ```cmd
-# Remove a feature worktree (prompts about branch deletion)
+# Interactive mode - select from list
+wt-remove
+
+# Remove a specific worktree (prompts about branch deletion)
 wt-remove AI-1234-feature
 
 # Remove worktree AND delete the branch
-wt-remove AI-1234-feature --delete-branch
 wt-remove AI-1234-feature -d
 
 # Remove worktree but keep the branch (no prompt)
-wt-remove AI-1234-feature --keep-branch
 wt-remove AI-1234-feature -k
 
 # Force remove (with uncommitted changes)
 wt-remove my-branch --force
+```
+
+**Interactive mode:**
+```
+$ wt-remove
+
+Select worktree to remove:
+
+  1) AI-1234-feature (feature)
+  2) critical-fix (hotfix)
+  3) current (review)
+
+Choice (number or text to filter): 1
 ```
 
 **Options:**
@@ -281,10 +295,13 @@ wt-remove my-branch --force
 - `--keep-branch`, `-k` - Keep the local branch (no prompt)
 
 **What it does:**
-1. Finds the worktree in `_feature/`, `_hotfix/`, or `_review/`
-2. Removes the worktree
-3. Prunes git references
-4. Prompts to delete the branch (unless `-d` or `-k` specified)
+1. If no name given, shows interactive list of removable worktrees
+2. Finds the worktree in `_feature/`, `_hotfix/`, or `_review/`
+3. Removes the worktree (with retry logic for locked files)
+4. Prunes git references
+5. Prompts to delete the branch (unless `-d` or `-k` specified)
+
+**File locking:** If the directory is locked (IDE open, terminal inside), the script will prompt you to close programs and retry.
 
 ---
 
@@ -356,7 +373,8 @@ wt-cleanup
 | `wt-hotfix-done <name>` | Remove hotfix worktree | `wt-hotfix-done urgent-fix` |
 | `wt-review <pr#>` | Review a PR | `wt-review 123` |
 | `wt-review-done` | Done reviewing | `wt-review-done` |
-| `wt-remove <name>` | Remove worktree (prompts for branch) | `wt-remove AI-1234-thing` |
+| `wt-remove` | Interactive worktree removal | `wt-remove` |
+| `wt-remove <name>` | Remove specific worktree | `wt-remove AI-1234-thing` |
 | `wt-remove <name> -d` | Remove worktree and branch | `wt-remove AI-1234-thing -d` |
 | `wt-status` | Status of all repos | `wt-status` |
 | `wt-cleanup` | Clean stale worktrees | `wt-cleanup --dry-run` |
