@@ -181,7 +181,9 @@ wt-feature joshua/experimental-thing
 
 **Result:** New worktree at `<repo>.git\_feature\<name>\`
 
-**Note:** If the branch already exists, the command will use it instead of failing.
+**Notes:**
+- If the branch already exists, the command will use it instead of failing
+- Automatically changes to the new worktree directory after creation
 
 ---
 
@@ -199,6 +201,8 @@ wt-hotfix payment-issue
 3. Creates worktree at `_hotfix/<name>/`
 
 **Result:** New worktree at `<repo>.git\_hotfix\<name>\`
+
+**Note:** Automatically changes to the new worktree directory after creation.
 
 ---
 
@@ -238,7 +242,9 @@ wt-review joshua/new-api
 
 **Result:** Ready to review at `<repo>.git\_review\current\`
 
-**Note:** Your current feature work is completely untouched!
+**Notes:**
+- Your current feature work is completely untouched!
+- Automatically changes to the review worktree directory after creation
 
 ---
 
@@ -301,7 +307,9 @@ Choice (number or text to filter): 1
 4. Prunes git references
 5. Prompts to delete the branch (unless `-d` or `-k` specified)
 
-**File locking:** If the directory is locked (IDE open, terminal inside), the script will prompt you to close programs and retry.
+**File locking:** If the directory is locked (IDE open, terminal inside), you can choose to [R]etry, [F]orce delete, or [Q]uit. Force delete will remove the directory even if locked.
+
+**Note:** Automatically moves you to the repo root after removal (so you're not stuck in a deleted directory).
 
 ---
 
