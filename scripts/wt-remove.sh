@@ -80,16 +80,16 @@ get_removable_worktrees() {
     printf '%s\n' "${worktrees[@]}"
 }
 
-# Get list of valid worktrees from git
-get_valid_worktrees() {
-    git worktree list --porcelain | grep "^worktree " | sed 's/^worktree //'
-}
-
 # Check if a path is a valid worktree
 is_valid_worktree() {
     local path="$1"
-    local abs_path=$(cd "$path" 2>/dev/null && pwd -P)
-    get_valid_worktrees | grep -qF "$abs_path"
+    local abs_path=$(cd "$repo_root/$path" 2>/dev/null && pwd -P)
+
+    # Normalize path: convert /c/ to C:/ for comparison with git output
+    abs_path=$(echo "$abs_path" | sed 's|^/c/|C:/|i; s|^/d/|D:/|i')
+
+    # Check against git worktree list
+    git worktree list --porcelain | grep "^worktree " | sed 's/^worktree //' | grep -qF "$abs_path"
 }
 
 # Interactive selection if no worktree specified
