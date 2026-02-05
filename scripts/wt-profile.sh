@@ -135,6 +135,14 @@ wt-hotfix-done() {
     bash "$WORKTREE_SCRIPTS/wt-hotfix-done.sh" "$@"
 }
 
+wt-hotfix-pr() {
+    bash "$WORKTREE_SCRIPTS/wt-hotfix-pr.sh" "$@"
+    if [ $? -eq 0 ] && [ -n "$1" ]; then
+        local repo_root=$(git rev-parse --git-common-dir 2>/dev/null || git rev-parse --git-dir)
+        cd "$repo_root/_hotfix/hotfix-pr-$1" 2>/dev/null || true
+    fi
+}
+
 # Sync current branch with develop (or another branch)
 wt-sync() {
     bash "$WORKTREE_SCRIPTS/wt-sync.sh" "$@"

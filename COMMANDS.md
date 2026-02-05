@@ -225,6 +225,57 @@ wt-hotfix-done payment-issue
 
 ---
 
+### `wt-hotfix-pr`
+Cherry-pick a merged develop PR onto the latest release branch.
+
+```cmd
+# Cherry-pick PR #456 to latest release branch
+wt-hotfix-pr 456
+
+# Target a specific release branch
+wt-hotfix-pr 456 --release release/2026-02-04
+
+# Preview what would happen (no changes)
+wt-hotfix-pr 456 --dry-run
+```
+
+**Options:**
+- `--release <branch>` - Target a specific release branch instead of auto-detecting
+- `--dry-run` - Show summary without making changes
+
+**What it does:**
+1. Looks up the PR on GitHub (requires `gh` CLI)
+2. Validates the PR is merged and gets merge commit details
+3. Auto-detects the merge strategy (squash, merge commit, or rebase)
+4. Finds the latest `release/*` branch (or uses `--release`)
+5. Confirms the release branch and cherry-pick plan with the user
+6. Creates a worktree at `_hotfix/hotfix-pr-<N>/`
+7. Cherry-picks using the appropriate strategy:
+   - **Squash merge:** `cherry-pick <sha>` (single commit)
+   - **Merge commit:** `cherry-pick -m 1 <sha>`
+   - **Rebase merge:** `cherry-pick <range>` (all rebased commits)
+8. If conflicts occur: lists files, opens editor, waits for resolution
+9. Pushes the branch and creates a PR targeting the release branch
+
+**Merge strategy detection:**
+The command automatically detects how the original PR was merged:
+- If the merge commit has multiple parents → merge commit
+- If the PR had 1 commit → squash/single commit
+- If the PR had multiple commits → uses patch-id comparison to distinguish squash vs rebase
+
+**Naming conventions:**
+- Hotfix branch: `hotfix/pr-<N>-to-<date>` (e.g., `hotfix/pr-456-to-2026-02-04`)
+- Worktree dir: `_hotfix/hotfix-pr-<N>` (e.g., `_hotfix/hotfix-pr-456`)
+
+**Cleanup:** Uses existing `wt-hotfix-done` command:
+```cmd
+wt-hotfix-done hotfix-pr-456
+```
+
+**Note:** Automatically changes to the new worktree directory after creation.
+
+---
+
 ### `wt-sync`
 Sync a branch with develop (or another target branch). Supports interactive selection.
 
@@ -452,6 +503,7 @@ wt-cleanup
 | `wt-feature <name>` | New feature branch | `wt-feature AI-1234-thing` |
 | `wt-hotfix <name>` | New hotfix branch | `wt-hotfix urgent-fix` |
 | `wt-hotfix-done <name>` | Remove hotfix worktree | `wt-hotfix-done urgent-fix` |
+| `wt-hotfix-pr <pr#>` | Cherry-pick merged PR to release | `wt-hotfix-pr 456` |
 | `wt-sync` | Sync branch with develop | `wt-sync` |
 | `wt-sync <branch>` | Sync with specific branch | `wt-sync main --merge` |
 | `wt-review <pr#>` | Review a PR | `wt-review 123` |
@@ -496,6 +548,17 @@ git push -u origin hotfix/payment-broken
 # Create PR, merge, then cleanup:
 cd ..
 git worktree remove _hotfix/payment-broken
+```
+
+### Hotfix from Develop PR
+```cmd
+# A PR was merged to develop but also needs to go to the current release
+wt-hotfix-pr 456
+# ... resolve conflicts if any ...
+# PR is automatically created targeting the release branch
+
+# When the hotfix PR is merged, clean up:
+wt-hotfix-done hotfix-pr-456
 ```
 
 ### Keeping Feature Branch Up to Date
