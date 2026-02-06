@@ -1,12 +1,13 @@
 #!/bin/bash
 # wt-hotfix-pr.sh - Cherry-pick a merged develop PR onto a release branch
-# Usage: wt-hotfix-pr <pr_number> [--release <branch>] [--dry-run] [--workdir <path>]
+# Usage: wt-hotfix-pr <pr_number> [--ticket <JIRA-ID>] [--release <branch>] [--dry-run] [--workdir <path>]
 
 set -e
 
 # Parse arguments
 pr_number=""
 release_branch=""
+ticket=""
 dry_run=false
 workdir=""
 
@@ -14,6 +15,10 @@ while [[ $# -gt 0 ]]; do
     case $1 in
         --release)
             release_branch="$2"
+            shift 2
+            ;;
+        --ticket)
+            ticket="$2"
             shift 2
             ;;
         --dry-run)
@@ -30,12 +35,14 @@ while [[ $# -gt 0 ]]; do
             echo "Cherry-pick a merged develop PR onto the latest release branch."
             echo ""
             echo "Options:"
+            echo "  --ticket <JIRA-ID>   Jira ticket ID (prompted if not provided)"
             echo "  --release <branch>   Target release branch (default: latest release/*)"
             echo "  --dry-run            Show what would happen without making changes"
             echo "  --help, -h           Show this help message"
             echo ""
             echo "Examples:"
             echo "  wt-hotfix-pr 456                          # Cherry-pick PR #456 to latest release"
+            echo "  wt-hotfix-pr 456 --ticket AI-1234         # With Jira ticket"
             echo "  wt-hotfix-pr 456 --release release/2026-02-04"
             echo "  wt-hotfix-pr 456 --dry-run                # Preview only"
             exit 0
@@ -257,9 +264,19 @@ else
     esac
 fi
 
+# Prompt for Jira ticket if not provided
+if [ -z "$ticket" ]; then
+    echo ""
+    read -p "🎫 Jira ticket for this hotfix (e.g. AI-1234): " ticket
+    if [ -z "$ticket" ]; then
+        echo "❌ Jira ticket is required."
+        exit 1
+    fi
+fi
+
 # Extract date from release branch for naming
 release_date=$(echo "$release_branch" | sed 's|release/||')
-hotfix_branch="hotfix/pr-${pr_number}-to-${release_date}"
+hotfix_branch="hotfix/${ticket}-pr-${pr_number}-to-${release_date}"
 worktree_dir="_hotfix/hotfix-pr-${pr_number}"
 
 # Check if commit is already on release branch
@@ -274,6 +291,7 @@ echo ""
 echo "🍒 Ready to cherry-pick:"
 echo ""
 echo "   PR:       #${pr_number} - ${pr_title}"
+echo "   Jira:     ${ticket}"
 
 if [[ "$strategy" == rebase* ]] && [ -n "$commit_list" ]; then
     echo "   Strategy: ${strategy}"
@@ -294,6 +312,8 @@ echo ""
 # Dry run exits here
 if [ "$dry_run" = true ]; then
     echo "   (dry run - no changes made)"
+    echo ""
+    echo "   Would create PR: [${ticket}] Cherry-pick PR #${pr_number} to ${release_branch}"
     exit 0
 fi
 
@@ -388,7 +408,7 @@ else
             echo "  git add ."
             echo "  git cherry-pick --continue"
             echo "  git push -u origin ${hotfix_branch}"
-            echo "  gh pr create --base ${release_branch} --title \"Cherry-pick PR #${pr_number} to ${release_branch}\" --body \"Cherry-pick of #${pr_number}\""
+            echo "  gh pr create --base ${release_branch} --title \"[${ticket}] Cherry-pick PR #${pr_number} to ${release_branch}\" --body \"Cherry-pick of #${pr_number}\""
             echo ""
             echo "When done:"
             echo "  wt-hotfix-done hotfix-pr-${pr_number}"
@@ -409,22 +429,96 @@ else
     exit 1
 fi
 
+# Postmortem questions
+echo ""
+echo "📋 Hotfix Postmortem - please provide context:"
+echo ""
+
+read -p "Why is this change needed in the release?
+> " pm_reason
+
+read -p "What is the customer/business impact if this isn't hotfixed?
+> " pm_impact
+
+read -p "What testing was done on the original PR?
+> " pm_testing
+
+read -p "Any additional risks or notes for reviewers? (Enter to skip)
+> " pm_notes
+
+if [ -z "$pm_notes" ]; then
+    pm_notes="None"
+fi
+
+# Generate postmortem via claude CLI if available
+postmortem=""
+if command -v claude &> /dev/null; then
+    echo ""
+    echo "🤖 Generating postmortem with Claude..."
+    postmortem=$(claude --print "Generate a concise hotfix postmortem in markdown. Keep it to 2-3 short paragraphs. Do not include a title heading — start directly with the content. Summarize why this hotfix is needed, the risk assessment, and testing confidence." <<EOF
+PR #${pr_number}: ${pr_title}
+Branch: ${pr_head} → ${pr_base}
+Release target: ${release_branch}
+Merge strategy: ${strategy}
+
+Why needed in release: ${pm_reason}
+Business impact: ${pm_impact}
+Testing done: ${pm_testing}
+Additional notes: ${pm_notes}
+EOF
+    ) || true
+fi
+
+# Build PR body
+if [ -n "$postmortem" ]; then
+    pr_body="## Cherry-pick Info
+- **Original PR:** #${pr_number}
+- **Jira:** ${ticket}
+- **Merge strategy:** ${strategy}
+- **Merge commit:** ${merge_commit:0:8}
+
+## Hotfix Postmortem
+
+${postmortem}
+
+### Context provided
+- **Why needed:** ${pm_reason}
+- **Business impact:** ${pm_impact}
+- **Testing done:** ${pm_testing}
+- **Additional notes:** ${pm_notes}"
+else
+    pr_body="## Cherry-pick Info
+- **Original PR:** #${pr_number}
+- **Jira:** ${ticket}
+- **Merge strategy:** ${strategy}
+- **Merge commit:** ${merge_commit:0:8}
+
+## Hotfix Postmortem
+
+### Why is this change needed in the release?
+${pm_reason}
+
+### What is the customer/business impact?
+${pm_impact}
+
+### What testing was done?
+${pm_testing}
+
+### Additional risks or notes
+${pm_notes}"
+fi
+
 # Create PR
 echo ""
 echo "📝 Creating pull request..."
-pr_body="Cherry-pick of #${pr_number} (${pr_title}) to \`${release_branch}\`.
-
-**Original PR:** #${pr_number}
-**Merge strategy detected:** ${strategy}
-**Merge commit:** ${merge_commit:0:8}"
 
 pr_url=$(gh pr create \
     --base "$release_branch" \
-    --title "Cherry-pick PR #${pr_number} to ${release_branch}" \
+    --title "[${ticket}] Cherry-pick PR #${pr_number} to ${release_branch}" \
     --body "$pr_body" \
     2>/dev/null) || {
     echo "⚠️  PR creation failed. Branch is pushed - create it manually:"
-    echo "  gh pr create --base ${release_branch} --title \"Cherry-pick PR #${pr_number} to ${release_branch}\""
+    echo "  gh pr create --base ${release_branch} --title \"[${ticket}] Cherry-pick PR #${pr_number} to ${release_branch}\""
     exit 1
 }
 

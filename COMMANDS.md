@@ -226,20 +226,24 @@ wt-hotfix-done payment-issue
 ---
 
 ### `wt-hotfix-pr`
-Cherry-pick a merged develop PR onto the latest release branch.
+Cherry-pick a merged develop PR onto the latest release branch, with Jira tracking and postmortem.
 
 ```cmd
-# Cherry-pick PR #456 to latest release branch
+# Cherry-pick PR #456 to latest release branch (prompts for Jira ticket)
 wt-hotfix-pr 456
 
+# With Jira ticket specified upfront
+wt-hotfix-pr 456 --ticket AI-1234
+
 # Target a specific release branch
-wt-hotfix-pr 456 --release release/2026-02-04
+wt-hotfix-pr 456 --ticket AI-1234 --release release/2026-02-04
 
 # Preview what would happen (no changes)
 wt-hotfix-pr 456 --dry-run
 ```
 
 **Options:**
+- `--ticket <JIRA-ID>` - Jira ticket ID (prompted interactively if not provided)
 - `--release <branch>` - Target a specific release branch instead of auto-detecting
 - `--dry-run` - Show summary without making changes
 
@@ -248,14 +252,18 @@ wt-hotfix-pr 456 --dry-run
 2. Validates the PR is merged and gets merge commit details
 3. Auto-detects the merge strategy (squash, merge commit, or rebase)
 4. Finds the latest `release/*` branch (or uses `--release`)
-5. Confirms the release branch and cherry-pick plan with the user
-6. Creates a worktree at `_hotfix/hotfix-pr-<N>/`
-7. Cherry-picks using the appropriate strategy:
+5. Prompts for Jira ticket (if not passed via `--ticket`)
+6. Confirms the release branch and cherry-pick plan with the user
+7. Creates a worktree at `_hotfix/hotfix-pr-<N>/`
+8. Cherry-picks using the appropriate strategy:
    - **Squash merge:** `cherry-pick <sha>` (single commit)
    - **Merge commit:** `cherry-pick -m 1 <sha>`
    - **Rebase merge:** `cherry-pick <range>` (all rebased commits)
-8. If conflicts occur: lists files, opens editor, waits for resolution
-9. Pushes the branch and creates a PR targeting the release branch
+9. If conflicts occur: lists files, opens editor, waits for resolution
+10. Pushes the branch
+11. Asks postmortem questions (why needed, business impact, testing, notes)
+12. Generates AI-enhanced postmortem via `claude` CLI (falls back to manual template if not installed)
+13. Creates a PR with the postmortem in the description
 
 **Merge strategy detection:**
 The command automatically detects how the original PR was merged:
@@ -264,8 +272,9 @@ The command automatically detects how the original PR was merged:
 - If the PR had multiple commits → uses patch-id comparison to distinguish squash vs rebase
 
 **Naming conventions:**
-- Hotfix branch: `hotfix/pr-<N>-to-<date>` (e.g., `hotfix/pr-456-to-2026-02-04`)
+- Hotfix branch: `hotfix/<JIRA-ID>-pr-<N>-to-<date>` (e.g., `hotfix/AI-1234-pr-456-to-2026-02-04`)
 - Worktree dir: `_hotfix/hotfix-pr-<N>` (e.g., `_hotfix/hotfix-pr-456`)
+- PR title: `[<JIRA-ID>] Cherry-pick PR #<N> to release/<date>`
 
 **Cleanup:** Uses existing `wt-hotfix-done` command:
 ```cmd
@@ -503,7 +512,7 @@ wt-cleanup
 | `wt-feature <name>` | New feature branch | `wt-feature AI-1234-thing` |
 | `wt-hotfix <name>` | New hotfix branch | `wt-hotfix urgent-fix` |
 | `wt-hotfix-done <name>` | Remove hotfix worktree | `wt-hotfix-done urgent-fix` |
-| `wt-hotfix-pr <pr#>` | Cherry-pick merged PR to release | `wt-hotfix-pr 456` |
+| `wt-hotfix-pr <pr#>` | Cherry-pick merged PR to release | `wt-hotfix-pr 456 --ticket AI-1234` |
 | `wt-sync` | Sync branch with develop | `wt-sync` |
 | `wt-sync <branch>` | Sync with specific branch | `wt-sync main --merge` |
 | `wt-review <pr#>` | Review a PR | `wt-review 123` |
@@ -553,8 +562,9 @@ git worktree remove _hotfix/payment-broken
 ### Hotfix from Develop PR
 ```cmd
 # A PR was merged to develop but also needs to go to the current release
-wt-hotfix-pr 456
+wt-hotfix-pr 456 --ticket AI-1234
 # ... resolve conflicts if any ...
+# Answer postmortem questions, AI-generated summary added to PR
 # PR is automatically created targeting the release branch
 
 # When the hotfix PR is merged, clean up:
