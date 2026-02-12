@@ -37,15 +37,27 @@ echo "📌 Default branch detected: ${default_branch}"
 # Create main/master worktree (with local branch tracking remote)
 echo "🌳 Creating main worktree..."
 if git show-ref --verify --quiet "refs/remotes/origin/main"; then
-    git worktree add --track -b main main origin/main
+    if git show-ref --verify --quiet "refs/heads/main"; then
+        git worktree add main main
+    else
+        git worktree add --track -b main main origin/main
+    fi
 elif git show-ref --verify --quiet "refs/remotes/origin/master"; then
-    git worktree add --track -b main main origin/master
+    if git show-ref --verify --quiet "refs/heads/main"; then
+        git worktree add main main
+    else
+        git worktree add --track -b main main origin/master
+    fi
 fi
 
 # Create develop worktree if it exists (with local branch tracking remote)
 if git show-ref --verify --quiet "refs/remotes/origin/develop"; then
     echo "🌳 Creating develop worktree..."
-    git worktree add --track -b develop develop origin/develop
+    if git show-ref --verify --quiet "refs/heads/develop"; then
+        git worktree add develop develop
+    else
+        git worktree add --track -b develop develop origin/develop
+    fi
 fi
 
 # Create empty directories for feature and review worktrees
