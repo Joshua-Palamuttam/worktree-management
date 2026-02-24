@@ -1,0 +1,32 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "2605a17f7e8e",
+  "session_id": "ded3fd0c-acf1-45a6-9a80-8054c33da3e0",
+  "strategy": "manual-commit",
+  "created_at": "2026-02-24T06:37:55.254838Z",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "COMMANDS.md"
+  ],
+  "agent": "Claude Code",
+  "turn_id": "af418948cce0",
+  "transcript_identifier_at_start": "e6d24c78-d008-4ef2-a741-dc395d74293b",
+  "token_usage": {
+    "input_tokens": 42,
+    "cache_creation_tokens": 62179,
+    "cache_read_tokens": 1286270,
+    "output_tokens": 6010,
+    "api_call_count": 32
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-02-24T06:37:55.1228147Z",
+    "agent_lines": 0,
+    "human_added": 0,
+    "human_modified": 1177,
+    "human_removed": 2710,
+    "total_committed": 3,
+    "agent_percentage": 0
+  },
+  "transcript_path": ".claude\\projects\\C--worktrees-SeekOut-worktree-management\\ded3fd0c-acf1-45a6-9a80-8054c33da3e0.jsonl"
+}
