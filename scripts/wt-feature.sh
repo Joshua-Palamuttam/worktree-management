@@ -102,6 +102,15 @@ else
         else
             # Detect the remote's default branch (e.g. main, master)
             default_branch=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's|refs/remotes/origin/||')
+            if [ -z "$default_branch" ]; then
+                # origin/HEAD not set — try common defaults
+                for candidate in main master; do
+                    if git show-ref --verify --quiet "refs/remotes/origin/${candidate}"; then
+                        default_branch="$candidate"
+                        break
+                    fi
+                done
+            fi
             if [ -n "$default_branch" ]; then
                 base_branch="$default_branch"
             else
