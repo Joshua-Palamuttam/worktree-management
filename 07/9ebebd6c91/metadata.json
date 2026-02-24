@@ -3,7 +3,7 @@
   "checkpoint_id": "079ebebd6c91",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 2,
+  "checkpoints_count": 3,
   "files_touched": [
     "scripts/wt-feature.sh"
   ],
@@ -14,13 +14,20 @@
       "context": "/07/9ebebd6c91/0/context.md",
       "content_hash": "/07/9ebebd6c91/0/content_hash.txt",
       "prompt": "/07/9ebebd6c91/0/prompt.txt"
+    },
+    {
+      "metadata": "/07/9ebebd6c91/1/metadata.json",
+      "transcript": "/07/9ebebd6c91/1/full.jsonl",
+      "context": "/07/9ebebd6c91/1/context.md",
+      "content_hash": "/07/9ebebd6c91/1/content_hash.txt",
+      "prompt": "/07/9ebebd6c91/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 17,
-    "cache_creation_tokens": 27458,
-    "cache_read_tokens": 237490,
-    "output_tokens": 2051,
-    "api_call_count": 11
+    "input_tokens": 79,
+    "cache_creation_tokens": 103377,
+    "cache_read_tokens": 2343202,
+    "output_tokens": 8622,
+    "api_call_count": 55
   }
 }
