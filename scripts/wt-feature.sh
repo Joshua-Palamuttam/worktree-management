@@ -6,7 +6,8 @@ set -e
 
 # Parse arguments
 branch_name=""
-base_branch="develop"
+base_branch=""
+base_branch_explicit=false
 workdir=""
 
 while [[ $# -gt 0 ]]; do
@@ -20,6 +21,7 @@ while [[ $# -gt 0 ]]; do
                 branch_name="$1"
             else
                 base_branch="$1"
+                base_branch_explicit=true
             fi
             shift
             ;;
@@ -91,6 +93,25 @@ if [ -n "$branch_exists" ]; then
         git worktree add "$worktree_path" "$branch_name"
     fi
 else
+    # Determine the base branch
+    if [ "$base_branch_explicit" = false ]; then
+        # Prefer develop, then fall back to the remote's default branch
+        if git show-ref --verify --quiet "refs/remotes/origin/develop" || \
+           git show-ref --verify --quiet "refs/heads/develop"; then
+            base_branch="develop"
+        else
+            # Detect the remote's default branch (e.g. main, master)
+            default_branch=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's|refs/remotes/origin/||')
+            if [ -n "$default_branch" ]; then
+                base_branch="$default_branch"
+            else
+                echo "❌ No 'develop' branch found and could not detect remote default branch"
+                echo "   Specify a base branch: wt-feature <branch_name> <base_branch>"
+                exit 1
+            fi
+        fi
+    fi
+
     echo "🌿 Creating feature worktree..."
     echo "   Branch: ${branch_name}"
     echo "   Base: ${base_branch}"
@@ -126,7 +147,9 @@ done
 
 # Set upstream tracking
 cd "$worktree_path"
-git branch --set-upstream-to="origin/${base_branch}" "$branch_name" 2>/dev/null || true
+if [ -n "$base_branch" ]; then
+    git branch --set-upstream-to="origin/${base_branch}" "$branch_name" 2>/dev/null || true
+fi
 
 echo ""
 echo "✅ Feature worktree created!"
