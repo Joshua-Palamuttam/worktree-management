@@ -110,6 +110,20 @@ else
     git worktree add -b "$branch_name" "$worktree_path" "$base_ref"
 fi
 
+# Copy untracked config directories (.claude, .agent) from an existing worktree
+# Uses cp -rn (no-clobber) to add missing files without overwriting git-tracked ones
+for source_wt in "$repo_root/main" "$repo_root/develop" "$repo_root/master"; do
+    if [ -d "$source_wt" ]; then
+        for config_dir in .claude .agent; do
+            if [ -d "$source_wt/$config_dir" ]; then
+                cp -rn "$source_wt/$config_dir" "$worktree_path/"
+                echo "   Synced $config_dir/ from $(basename "$source_wt")"
+            fi
+        done
+        break
+    fi
+done
+
 # Set upstream tracking
 cd "$worktree_path"
 git branch --set-upstream-to="origin/${base_branch}" "$branch_name" 2>/dev/null || true

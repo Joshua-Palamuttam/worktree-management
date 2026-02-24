@@ -43,4 +43,18 @@ echo "Creating hotfix worktree from develop..."
 git fetch origin
 git worktree add -b "hotfix/$branch_name" "_hotfix/$branch_name" origin/develop
 
+# Copy untracked config directories (.claude, .agent) from an existing worktree
+# Uses cp -rn (no-clobber) to add missing files without overwriting git-tracked ones
+for source_wt in "$repo_root/main" "$repo_root/develop" "$repo_root/master"; do
+    if [ -d "$source_wt" ]; then
+        for config_dir in .claude .agent; do
+            if [ -d "$source_wt/$config_dir" ]; then
+                cp -rn "$source_wt/$config_dir" "_hotfix/$branch_name/"
+                echo "   Synced $config_dir/ from $(basename "$source_wt")"
+            fi
+        done
+        break
+    fi
+done
+
 echo "Hotfix worktree ready at: $repo_root/_hotfix/$branch_name"
