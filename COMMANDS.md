@@ -182,7 +182,8 @@ wt-feature joshua/experimental-thing
    - If exists: creates worktree from the existing branch
    - If new: creates new branch from `origin/develop`
 3. Creates worktree at `_feature/<name>/`
-4. Sets up upstream tracking
+4. Syncs untracked config directories (`.claude/`, `.agent/`) from an existing worktree (main/develop)
+5. Sets up upstream tracking
 
 **Result:** New worktree at `<repo>.git\_feature\<name>\`
 
@@ -204,6 +205,7 @@ wt-hotfix payment-issue
 1. Fetches latest from origin
 2. Creates new branch `hotfix/<name>` from `origin/develop`
 3. Creates worktree at `_hotfix/<name>/`
+4. Syncs untracked config directories (`.claude/`, `.agent/`) from an existing worktree (main/develop)
 
 **Result:** New worktree at `<repo>.git\_hotfix\<name>\`
 
@@ -371,6 +373,7 @@ wt-review joshua/new-api
 1. Removes any existing review worktree
 2. Fetches the PR or branch from origin
 3. Creates worktree at `_review/current/`
+4. Syncs untracked config directories (`.claude/`, `.agent/`) from an existing worktree (main/develop)
 
 **Result:** Ready to review at `<repo>.git\_review\current\`
 
