@@ -1,0 +1,34 @@
+some things don't have a develop branch can we fix the script to handle this? C:\worktrees-SeekOut\ouroboros.git>wt-feature create-api-scaffolding
+remote: Enumerating objects: 114, done.
+remote: Counting objects: 100% (19/19), done.
+remote: Compressing objects: 100% (7/7), done.
+remote: Total 114 (delta 12), reused 15 (delta 12), pack-reused 95 (from 1)
+Receiving objects: 100% (114/114), 86.00 KiB | 898.00 KiB/s, done.
+Resolving deltas: 100% (39/39), completed with 9 local objects.
+From https://github.com/Zipstorm/ouroboros
+ * [new branch]      SJ/execute-plane-with-dynamic-skills-loading -> origin/SJ/execute-plane-with-dynamic-skills-loading
+ * [new branch]      architecture -> origin/architecture
+   b1ecbd5..0164248  main         -> origin/main
+🌿 Creating feature worktree...
+   Branch: create-api-scaffolding
+   Base: develop
+   Path: _feature/create-api-scaffolding
+❌ Base branch 'develop' not found
+
+C:\worktrees-SeekOut\ouroboros.git>
+
+---
+
+I want to default to develop and if there is no develop then go to the base branch
+
+---
+
+commti and push this
+
+---
+
+C:\worktrees-SeekOut\ouroboros.git\main>wt-feature create-api-scaffolding
+❌ No 'develop' branch found and could not detect remote default branch
+   Specify a base branch: wt-feature <branch_name> <base_branch>
+
+C:\worktrees-SeekOut\ouroboros.git\main>
