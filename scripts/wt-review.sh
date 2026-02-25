@@ -86,7 +86,7 @@ for source_wt in "$repo_root/main" "$repo_root/develop" "$repo_root/master"; do
     if [ -d "$source_wt" ]; then
         for config_dir in .claude .agent; do
             if [ -d "$source_wt/$config_dir" ]; then
-                cp -rn "$source_wt/$config_dir" "$review_dir/"
+                cp -rn "$source_wt/$config_dir" "$review_dir/" 2>/dev/null || true
                 echo "   Synced $config_dir/ from $(basename "$source_wt")"
             fi
         done
