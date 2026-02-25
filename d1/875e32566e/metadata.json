@@ -1,0 +1,28 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "d1875e32566e",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "scripts/wt-feature.sh",
+    "scripts/wt-hotfix.sh",
+    "scripts/wt-review.sh"
+  ],
+  "sessions": [
+    {
+      "metadata": "/d1/875e32566e/0/metadata.json",
+      "transcript": "/d1/875e32566e/0/full.jsonl",
+      "context": "/d1/875e32566e/0/context.md",
+      "content_hash": "/d1/875e32566e/0/content_hash.txt",
+      "prompt": "/d1/875e32566e/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 54,
+    "cache_creation_tokens": 114837,
+    "cache_read_tokens": 1646082,
+    "output_tokens": 7580,
+    "api_call_count": 42
+  }
+}
