@@ -82,10 +82,27 @@ git worktree add "$review_dir" "$branch_name"
 
 # Copy untracked config directories (.claude, .agent) from an existing worktree
 # Uses cp -rn (no-clobber) to add missing files without overwriting git-tracked ones
+# First resolves file/directory type conflicts (e.g. git tracks skills as a file
+# but source worktree has it as a directory) so cp -rn can complete fully
 for source_wt in "$repo_root/main" "$repo_root/develop" "$repo_root/master"; do
     if [ -d "$source_wt" ]; then
         for config_dir in .claude .agent; do
             if [ -d "$source_wt/$config_dir" ]; then
+                # Resolve type conflicts at one level deep
+                if [ -d "$review_dir/$config_dir" ]; then
+                    for item in "$source_wt/$config_dir"/*; do
+                        [ -e "$item" ] || continue
+                        name=$(basename "$item")
+                        target="$review_dir/$config_dir/$name"
+                        if [ -e "$target" ]; then
+                            if [ -d "$item" ] && [ ! -d "$target" ]; then
+                                rm -f "$target"
+                            elif [ ! -d "$item" ] && [ -d "$target" ]; then
+                                rm -rf "$target"
+                            fi
+                        fi
+                    done
+                fi
                 cp -rn "$source_wt/$config_dir" "$review_dir/" 2>/dev/null || true
                 echo "   Synced $config_dir/ from $(basename "$source_wt")"
             fi
