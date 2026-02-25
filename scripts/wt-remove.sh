@@ -264,7 +264,7 @@ remove_worktree() {
 }
 
 # Attempt removal with retry logic for file locking
-max_attempts=2
+max_attempts=3
 attempt=1
 
 while [ $attempt -le $max_attempts ]; do
@@ -275,8 +275,21 @@ while [ $attempt -le $max_attempts ]; do
         break
     fi
 
+    # Check for modified/untracked files
+    if echo "$output" | grep -qi "modified or untracked"; then
+        echo ""
+        echo "⚠️  Worktree has modified or untracked files."
+        read -p "Force remove anyway? [y/N] " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            force_flag="--force"
+            continue
+        else
+            echo "Cancelled"
+            exit 1
+        fi
     # Check if it's a file locking issue
-    if echo "$output" | grep -qi "failed\|locked\|denied\|in use"; then
+    elif echo "$output" | grep -qi "failed\|locked\|denied\|in use"; then
         echo ""
         echo "⚠️  Directory appears to be locked. Common causes:"
         echo "   - VS Code or IDE has this folder open"
