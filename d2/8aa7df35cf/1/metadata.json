@@ -1,0 +1,33 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "d28aa7df35cf",
+  "session_id": "dbe1deb0-0b7b-4657-a57f-6007e1e57735",
+  "strategy": "manual-commit",
+  "created_at": "2026-02-25T02:00:03.5768913Z",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "bin/wt-remove.cmd",
+    "scripts/wt-remove.sh"
+  ],
+  "agent": "Claude Code",
+  "turn_id": "6acb2e24c990",
+  "transcript_identifier_at_start": "1394672e-004c-42ac-a097-e5667d47b9ff",
+  "token_usage": {
+    "input_tokens": 29,
+    "cache_creation_tokens": 30156,
+    "cache_read_tokens": 468448,
+    "output_tokens": 2912,
+    "api_call_count": 19
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-02-25T02:00:03.5060919Z",
+    "agent_lines": 15,
+    "human_added": 0,
+    "human_modified": 41,
+    "human_removed": 0,
+    "total_committed": 56,
+    "agent_percentage": 26.785714285714285
+  },
+  "transcript_path": ".claude\\projects\\C--worktrees-SeekOut-worktree-management\\dbe1deb0-0b7b-4657-a57f-6007e1e57735.jsonl"
+}
