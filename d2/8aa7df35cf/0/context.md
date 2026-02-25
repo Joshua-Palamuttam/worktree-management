@@ -1,0 +1,26 @@
+# Session Context
+
+## User Prompts
+
+### Prompt 1
+
+why is this borken? 
+C:\worktrees-SeekOut\ouroboros.git\_feature\create-api-scaffolding>cd ..
+
+C:\worktrees-SeekOut\ouroboros.git\_feature>wt-remove
+
+Select worktree to remove:
+
+  1) cli-v0.1 (feature)
+  2) create-api-scaffolding (feature)
+
+Choice (number or text to filter): 2
+🗑️  Removing worktree: _feature/create-api-scaffolding
+fatal: '_feature/create-api-scaffolding' contains modified or untracked files, use --force to delete it
+
+C:\worktrees-SeekOut\ouroboros.git>
+
+### Prompt 2
+
+commit and push this
+
