@@ -3,7 +3,7 @@
   "checkpoint_id": "d28aa7df35cf",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 3,
+  "checkpoints_count": 4,
   "files_touched": [
     "bin/wt-remove.cmd",
     "scripts/wt-remove.sh"
@@ -22,13 +22,20 @@
       "context": "/d2/8aa7df35cf/1/context.md",
       "content_hash": "/d2/8aa7df35cf/1/content_hash.txt",
       "prompt": "/d2/8aa7df35cf/1/prompt.txt"
+    },
+    {
+      "metadata": "/d2/8aa7df35cf/2/metadata.json",
+      "transcript": "/d2/8aa7df35cf/2/full.jsonl",
+      "context": "/d2/8aa7df35cf/2/context.md",
+      "content_hash": "/d2/8aa7df35cf/2/content_hash.txt",
+      "prompt": "/d2/8aa7df35cf/2/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 45,
-    "cache_creation_tokens": 65977,
-    "cache_read_tokens": 791487,
-    "output_tokens": 5066,
-    "api_call_count": 31
+    "input_tokens": 107,
+    "cache_creation_tokens": 141896,
+    "cache_read_tokens": 2897199,
+    "output_tokens": 11637,
+    "api_call_count": 75
   }
 }

@@ -1,0 +1,274 @@
+when I use wt-feature or wt-hotfix to create a worktree branch, I don't get my .agent or .claude file within the worktree, why is that?
+
+---
+
+can you check if this works
+
+---
+
+commit and push this
+
+---
+
+update COMMANDS.md with the new behavior
+
+---
+
+yes, commit and push
+
+---
+
+can we also check that if the .claude is already in the worktree repo for example we don't need to overwrite it?
+
+---
+
+commit and push
+
+---
+
+why did this not work in my backend worktree repo? C:\worktrees-SeekOut\backend.git\develop>wt-feature test-app-insights debugging
+From https://github.com/Zipstorm/backend
+ * [new branch]          Hotfix/AddLoggingToCrossReference -> origin/Hotfix/AddLoggingToCrossReference
+ * [new branch]          ashay/diversitydata     -> origin/ashay/diversitydata
+ * [new branch]          ashay/diversitydata2    -> origin/ashay/diversitydata2
+ * [new branch]          bug/1773_Add_description_for_Gallagher -> origin/bug/1773_Add_description_for_Gallagher
+ * [new branch]          bug/AddAPIToJCW         -> origin/bug/AddAPIToJCW
+ * [new branch]          bug/EIWJ-test-deploy    -> origin/bug/EIWJ-test-deploy
+ * [new branch]          bug/IND-937             -> origin/bug/IND-937
+ * [new branch]          bug/INT-2652-smart-message-connection-id -> origin/bug/INT-2652-smart-message-connection-id
+ * [new branch]          bug/INT-3285            -> origin/bug/INT-3285
+ * [new branch]          REDACTED -> REDACTED
+ * [new branch]          bug/RUN-1154-fix-router-info-has-boolean-regex -> origin/bug/RUN-1154-fix-router-info-has-boolean-regex
+ * [new branch]          bug/RUN-322-export-projects-spreadsheet -> origin/bug/RUN-322-export-projects-spreadsheet
+ * [new branch]          bug/RUN-474-fix-RR-and-contact-out-providers -> origin/bug/RUN-474-fix-RR-and-contact-out-providers
+ * [new branch]          bug/RUN-530-get-people-keymap-union-bug -> origin/bug/RUN-530-get-people-keymap-union-bug
+ * [new branch]          bug/RUN-897-profiles-not-completing -> origin/bug/RUN-897-profiles-not-completing
+ * [new branch]          bug/akhi-oops           -> origin/bug/akhi-oops
+ * [new branch]          bug/all-mapped-keys     -> origin/bug/all-mapped-keys
+ * [new branch]          bug/alt-key-grouping    -> origin/bug/alt-key-grouping
+ * [new branch]          bug/alumni-filter-null-coalescing -> origin/bug/alumni-filter-null-coalescing
+ * [new branch]          bug/app-table-escape    -> origin/bug/app-table-escape
+ * [new branch]          bug/application-filter-nagation -> origin/bug/application-filter-nagation
+ * [new branch]          bug/application-filter-syntax -> origin/bug/application-filter-syntax
+ * [new branch]          bug/application-table-total -> origin/bug/application-table-total
+ * [new branch]          bug/application-table-update -> origin/bug/application-table-update
+ * [new branch]          bug/ar-app-table-refresh -> origin/bug/ar-app-table-refresh
+ * [new branch]          bug/ar-fixes            -> origin/bug/ar-fixes
+ * [new branch]          bug/ar-issues-to-dev    -> origin/bug/ar-issues-to-dev
+ * [new branch]          bug/ar-jobs-performance -> origin/bug/ar-jobs-performance
+ * [new branch]          bug/ar-keys             -> origin/bug/ar-keys
+ * [new branch]          bug/ar-ordering         -> origin/bug/ar-ordering
+ * [new branch]          bug/ar-query-update     -> origin/bug/ar-query-update
+ * [new branch]          bug/ar-scorecard-snake-case -> origin/bug/ar-scorecard-snake-case
+ * [new branch]          bug/ar-sync-exception   -> origin/bug/ar-sync-exception
+ * [new branch]          bug/ats-autosuggest-backwards-compatibility -> origin/bug/ats-autosuggest-backwards-compatibility
+ * [new branch]          bug/ats-get-people      -> origin/bug/ats-get-people
+ * [new branch]          bug/ats-projects-2      -> origin/bug/ats-projects-2
+ * [new branch]          bug/attachment-batch-null -> origin/bug/attachment-batch-null
+ * [new branch]          bug/attatchment-listener-dropping-messages -> origin/bug/attatchment-listener-dropping-messages
+ * [new branch]          bug/batch-issue         -> origin/bug/batch-issue
+ * [new branch]          bug/broken-azure-search-indexer -> origin/bug/broken-azure-search-indexer
+ * [new branch]          bug/ces-deploy-script   -> origin/bug/ces-deploy-script
+ * [new branch]          bug/ces-merge-profile   -> origin/bug/ces-merge-profile
+ * [new branch]          bug/compliant-defaulting-false -> origin/bug/compliant-defaulting-false
+ * [new branch]          bug/config-loading-di   -> origin/bug/config-loading-di
+ * [new branch]          bug/contact-out-not-providing-results -> origin/bug/contact-out-not-providing-results
+ * [new branch]          bug/contacts-alt-map    -> origin/bug/contacts-alt-map
+ * [new branch]          bug/converting-dictionaries-to-classes -> origin/bug/converting-dictionaries-to-classes
+ * [new branch]          bug/cross-channel-query-join -> origin/bug/cross-channel-query-join
+ * [new branch]          bug/dev-get-connectionString -> origin/bug/dev-get-connectionString
+ * [new branch]          bug/dev-not-deploying   -> origin/bug/dev-not-deploying
+ * [new branch]          bug/disposition-issue   -> origin/bug/disposition-issue
+ * [new branch]          bug/distribution-service-error-handling -> origin/bug/distribution-service-error-handling
+ * [new branch]          bug/does-index-exist    -> origin/bug/does-index-exist
+ * [new branch]          bug/email-web-job-throw-exception -> origin/bug/email-web-job-throw-exception
+ * [new branch]          bug/empty-domain-source -> origin/bug/empty-domain-source
+ * [new branch]          bug/error-logging-block-silent-failure -> origin/bug/error-logging-block-silent-failure
+ * [new branch]          bug/error-pipeline-cancel -> origin/bug/error-pipeline-cancel
+ * [new branch]          bug/escaping-fields     -> origin/bug/escaping-fields
+ * [new branch]          bug/eto_query_scoring_profile -> origin/bug/eto_query_scoring_profile
+ * [new branch]          bug/eval-profiles       -> origin/bug/eval-profiles
+ * [new branch]          bug/evaluation-queue    -> origin/bug/evaluation-queue
+ * [new branch]          bug/exponential-backoff -> origin/bug/exponential-backoff
+ * [new branch]          bug/extra-jobs-telemetry -> origin/bug/extra-jobs-telemetry
+ * [new branch]          bug/failure-exception-handling -> origin/bug/failure-exception-handling
+ * [new branch]          bug/failure-handling-error -> origin/bug/failure-handling-error
+ * [new branch]          bug/failure-table-candidate-issue -> origin/bug/failure-table-candidate-issue
+ * [new branch]          bug/fewer-containers    -> origin/bug/fewer-containers
+ * [new branch]          bug/fix-academic-query  -> origin/bug/fix-academic-query
+ * [new branch]          bug/fix-azure-storage-helper -> origin/bug/fix-azure-storage-helper
+ * [new branch]          bug/fix-broken-recruiter -> origin/bug/fix-broken-recruiter
+ * [new branch]          bug/fix-ces-test-failures -> origin/bug/fix-ces-test-failures
+ * [new branch]          bug/fix-contact-finder-bugs -> origin/bug/fix-contact-finder-bugs
+ * [new branch]          bug/fix-eto-controller  -> origin/bug/fix-eto-controller
+ * [new branch]          bug/fix-non-precomputed-pf-index -> origin/bug/fix-non-precomputed-pf-index
+ * [new branch]          bug/fix-nursing-contact-issues -> origin/bug/fix-nursing-contact-issues
+ * [new branch]          bug/fix-partner-api-bug -> origin/bug/fix-partner-api-bug
+ * [new branch]          bug/fixInit             -> origin/bug/fixInit
+ * [new branch]          bug/fix_tests_code      -> origin/bug/fix_tests_code
+ * [new branch]          bug/get-initial-results -> origin/bug/get-initial-results
+ * [new branch]          bug/gh-ex-flag-incorrectly-set -> origin/bug/gh-ex-flag-incorrectly-set
+ * [new branch]          bug/grow-autosuggest-fix -> origin/bug/grow-autosuggest-fix
+ * [new branch]          bug/grow-profile-view   -> origin/bug/grow-profile-view
+ * [new branch]          bug/grpc-server-reflection -> origin/bug/grpc-server-reflection
+ * [new branch]          bug/has-cur-pos         -> origin/bug/has-cur-pos
+ * [new branch]          bug/hash-code           -> origin/bug/hash-code
+ * [new branch]          bug/inbound-filters     -> origin/bug/inbound-filters
+ * [new branch]          bug/ind-1239            -> origin/bug/ind-1239
+ * [new branch]          bug/ind-1497            -> origin/bug/ind-1497
+ * [new branch]          bug/ind-1763            -> origin/bug/ind-1763
+ * [new branch]          bug/ind-1813            -> origin/bug/ind-1813
+ * [new branch]          bug/ind-1821            -> origin/bug/ind-1821
+ * [new branch]          bug/ind-1897-1809       -> origin/bug/ind-1897-1809
+ * [new branch]          bug/ind-2011            -> origin/bug/ind-2011
+ * [new branch]          bug/ind-2016-v2         -> origin/bug/ind-2016-v2
+ * [new branch]          bug/ind-2085            -> origin/bug/ind-2085
+ * [new branch]          bug/ind-2095            -> origin/bug/ind-2095
+ * [new branch]          bug/ind-2180            -> origin/bug/ind-2180
+ * [new branch]          bug/ind-2278            -> origin/bug/ind-2278
+ * [new branch]          bug/ind-2282            -> origin/bug/ind-2282
+ * [new branch]          bug/ind-2336            -> origin/bug/ind-2336
+ * [new branch]          bug/ind-2458            -> origin/bug/ind-2458
+ * [new branch]          bug/ind-2465            -> origin/bug/ind-2465
+ * [new branch]          bug/ind-2473            -> origin/bug/ind-2473
+ * [new branch]          bug/ind-2479            -> origin/bug/ind-2479
+ * [new branch]          bug/ind-2520            -> origin/bug/ind-2520
+ * [new branch]          bug/ind-2554            -> origin/bug/ind-2554
+ * [new branch]          bug/ind-2620            -> origin/bug/ind-2620
+ * [new branch]          bug/ind-2631            -> origin/bug/ind-2631
+ * [new branch]          bug/ind-2633            -> origin/bug/ind-2633
+ * [new branch]          bug/ind-2648            -> origin/bug/ind-2648
+ * [new branch]          bug/ind-2654            -> origin/bug/ind-2654
+ * [new branch]          bug/ind-2685            -> origin/bug/ind-2685
+ * [new branch]          bug/ind-2695            -> origin/bug/ind-2695
+ * [new branch]          bug/ind-2695-net8       -> origin/bug/ind-2695-net8
+ * [new branch]          bug/ind-2697            -> origin/bug/ind-2697
+ * [new branch]          bug/ind-2706            -> origin/bug/ind-2706
+ * [new branch]          bug/ind-2719            -> origin/bug/ind-2719
+ * [new branch]          bug/index-deletion      -> origin/bug/index-deletion
+ * [new branch]          bug/index-map-healthcarefix -> origin/bug/index-map-healthcarefix
+ * [new branch]          bug/indexmap-initializer -> origin/bug/indexmap-initializer
+ * [new branch]          bug/indexmap-time-parse -> origin/bug/indexmap-time-parse
+ * [new branch]          bug/industry-merge      -> origin/bug/industry-merge
+ * [new branch]          bug/int-2643            -> origin/bug/int-2643
+ * [new branch]          bug/int-2752            -> origin/bug/int-2752
+ * [new branch]          bug/int-2775            -> origin/bug/int-2775
+ * [new branch]          bug/int-3405            -> origin/bug/int-3405
+ * [new branch]          bug/int-3520-v1         -> origin/bug/int-3520-v1
+ * [new branch]          bug/int-3785            -> origin/bug/int-3785
+ * [new branch]          bug/int-3867            -> origin/bug/int-3867
+ * [new branch]          bug/int-4143            -> origin/bug/int-4143
+ * [new branch]          bug/int-4271            -> origin/bug/int-4271
+ * [new branch]          bug/jcw-cr-exceptions   -> origin/bug/jcw-cr-exceptions
+ * [new branch]          bug/jcw-cr-npe          -> origin/bug/jcw-cr-npe
+ * [new branch]          bug/jobs-context-query  -> origin/bug/jobs-context-query
+ * [new branch]          bug/jobs-refresh        -> origin/bug/jobs-refresh
+ * [new branch]          bug/jobs-status-perf    -> origin/bug/jobs-status-perf
+ * [new branch]          bug/key-encoding        -> origin/bug/key-encoding
+ * [new branch]          bug/key-mapping-inverse -> origin/bug/key-mapping-inverse
+ * [new branch]          bug/key-not-found       -> origin/bug/key-not-found
+ * [new branch]          bug/key-phrases-name    -> origin/bug/key-phrases-name
+ * [new branch]          bug/key-to-string       -> origin/bug/key-to-string
+ * [new branch]          bug/keymap-cherry-pick  -> origin/bug/keymap-cherry-pick
+ * [new branch]          bug/live-refresh-fixes  -> origin/bug/live-refresh-fixes
+ * [new branch]          bug/location-issue      -> origin/bug/location-issue
+ * [new branch]          bug/match-profile-exp   -> origin/bug/match-profile-exp
+ * [new branch]          bug/million-verifier-pt2 -> origin/bug/million-verifier-pt2
+ * [new branch]          bug/missing-app-investigation -> origin/bug/missing-app-investigation
+ * [new branch]          bug/mixrank_location    -> origin/bug/mixrank_location
+ * [new branch]          bug/more-version-fixes  -> origin/bug/more-version-fixes
+ * [new branch]          bug/multiple-alumni-company -> origin/bug/multiple-alumni-company
+ * [new branch]          bug/mx-entity-fix       -> origin/bug/mx-entity-fix
+ * [new branch]          bug/new-data-verification-stats -> origin/bug/new-data-verification-stats
+ * [new branch]          bug/nre-issues          -> origin/bug/nre-issues
+ * [new branch]          bug/nuget-build-issue   -> origin/bug/nuget-build-issue
+ * [new branch]          bug/null-coalescing-operator-for-negative-locations -> origin/bug/null-coalescing-operator-for-negative-locations
+ * [new branch]          bug/null-pg-entry       -> origin/bug/null-pg-entry
+ * [new branch]          bug/null-req-keys       -> origin/bug/null-req-keys
+ * [new branch]          bug/nullPointerInContacss -> origin/bug/nullPointerInContacss
+ * [new branch]          bug/parse-cm-both-ways  -> origin/bug/parse-cm-both-ways
+ * [new branch]          bug/pause-autoscale     -> origin/bug/pause-autoscale
+ * [new branch]          bug/pdl-name-fix        -> origin/bug/pdl-name-fix
+ * [new branch]          bug/pg-dict-duplicate   -> origin/bug/pg-dict-duplicate
+ * [new branch]          bug/pg-null-index       -> origin/bug/pg-null-index
+ * [new branch]          bug/pools-and-referrals-fix -> origin/bug/pools-and-referrals-fix
+ * [new branch]          bug/pp-grpc-contract    -> origin/bug/pp-grpc-contract
+ * [new branch]          bug/psql-duplicate-upsert -> origin/bug/psql-duplicate-upsert
+ * [new branch]          bug/query-generation-bug -> origin/bug/query-generation-bug
+ * [new branch]          bug/queryable-key       -> origin/bug/queryable-key
+ * [new branch]          bug/rchilli-client-nre  -> origin/bug/rchilli-client-nre
+ * [new branch]          bug/rec-1092            -> origin/bug/rec-1092
+ * [new branch]          bug/recommendatinos-analysis -> origin/bug/recommendatinos-analysis
+ * [new branch]          bug/reduce-di-load-of-disposition -> origin/bug/reduce-di-load-of-disposition
+ * [new branch]          bug/regenerate-ats-autosuggest -> origin/bug/regenerate-ats-autosuggest
+ * [new branch]          bug/removing-early-exit -> origin/bug/removing-early-exit
+ * [new branch]          bug/rename-attachment-endpoint -> origin/bug/rename-attachment-endpoint
+ * [new branch]          bug/rename-job-post     -> origin/bug/rename-job-post
+ * [new branch]          bug/results-input-query-ignore -> origin/bug/results-input-query-ignore
+ * [new branch]          bug/resume-fix          -> origin/bug/resume-fix
+ * [new branch]          bug/rubric-criteria-id  -> origin/bug/rubric-criteria-id
+ * [new branch]          bug/rubric-race-condition -> origin/bug/rubric-race-condition
+ * [new branch]          bug/run-1015            -> origin/bug/run-1015
+ * [new branch]          bug/salary-candidate-schema -> origin/bug/salary-candidate-schema
+ * [new branch]          bug/sample_index_feb_2022 -> origin/bug/sample_index_feb_2022
+ * [new branch]          bug/search-empty-index-locations -> origin/bug/search-empty-index-locations
+ * [new branch]          bug/smart-message-ats   -> origin/bug/smart-message-ats
+ * [new branch]          bug/srcg-4988           -> origin/bug/srcg-4988
+ * [new branch]          bug/srcg-5894           -> origin/bug/srcg-5894
+ * [new branch]          bug/system-threading-channel-version -> origin/bug/system-threading-channel-version
+ * [new branch]          bug/temp-naming-fix     -> origin/bug/temp-naming-fix
+ * [new branch]          bug/temp-table-naming   -> origin/bug/temp-table-naming
+ * [new branch]          bug/title-generation-list -> origin/bug/title-generation-list
+ * [new branch]          bug/triage-5597         -> origin/bug/triage-5597
+ * [new branch]          bug/triage-61607        -> origin/bug/triage-61607
+ * [new branch]          bug/undo-field-rename   -> origin/bug/undo-field-rename
+ * [new branch]          bug/undo-suggested-job-change -> origin/bug/undo-suggested-job-change
+ * [new branch]          bug/undoing-attachment-annotate-changes -> origin/bug/undoing-attachment-annotate-changes
+ * [new branch]          bug/update-application-method -> origin/bug/update-application-method
+ * [new branch]          bug/us-extra-name       -> origin/bug/us-extra-name
+ * [new branch]          bug/webjob_deployment   -> origin/bug/webjob_deployment
+ * [new branch]          bug/whole-person-evaluation -> origin/bug/whole-person-evaluation
+ * [new branch]          bug/zayo-date-parse-issue -> origin/bug/zayo-date-parse-issue
+ * [new branch]          hotfix/1-28-2022-SRCG-321 -> origin/hotfix/1-28-2022-SRCG-321
+ * [new branch]          hotfix/8-16-22-rec-716  -> origin/hotfix/8-16-22-rec-716
+ * [new branch]          hotfix/ITO-714-email-field-blank-for-export-excel-PPE -> origin/hotfix/ITO-714-email-field-blank-for-export-excel-PPE
+ * [new branch]          hotfix/RUN-530-and-RUN-536 -> origin/hotfix/RUN-530-and-RUN-536
+ * [new branch]          hotfix/RUN-568-redirect-url -> origin/hotfix/RUN-568-redirect-url
+ * [new branch]          hotfix/ar-connection-id -> origin/hotfix/ar-connection-id
+ * [new branch]          hotfix/ar-fixes         -> origin/hotfix/ar-fixes
+ * [new branch]          hotfix/ar-job-search    -> origin/hotfix/ar-job-search
+ * [new branch]          hotfix/ar_gofundme_issue_hotfix_on_release_10-25-23 -> origin/hotfix/ar_gofundme_issue_hotfix_on_release_10-25-23
+ * [new branch]          hotfix/ar_resume_viewer_fix_on_11-08-23 -> origin/hotfix/ar_resume_viewer_fix_on_11-08-23
+ * [new branch]          hotfix/ats-v2-bugs      -> origin/hotfix/ats-v2-bugs
+ * [new branch]          hotfix/atspsql          -> origin/hotfix/atspsql
+ * [new branch]          hotfix/change-cache-key-for-captions-highlighting -> origin/hotfix/change-cache-key-for-captions-highlighting
+ * [new branch]          hotfix/cross-reference-null-person-key -> origin/hotfix/cross-reference-null-person-key
+ * [new branch]          hotfix/escape-job-context-query -> origin/hotfix/escape-job-context-query
+ * [new branch]          hotfix/fix-expert-searches -> origin/hotfix/fix-expert-searches
+ * [new branch]          hotfix/inbound-eval     -> origin/hotfix/inbound-eval
+ * [new branch]          hotfix/inbound-eval-11-26-25 -> origin/hotfix/inbound-eval-11-26-25
+ * [new branch]          hotfix/ind-1134         -> origin/hotfix/ind-1134
+ * [new branch]          hotfix/ind-2017         -> origin/hotfix/ind-2017
+ * [new branch]          hotfix/ind-2170         -> origin/hotfix/ind-2170
+ * [new branch]          hotfix/ind-2348         -> origin/hotfix/ind-2348
+ * [new branch]          hotfix/ind-2361         -> origin/hotfix/ind-2361
+ * [new branch]          hotfix/ind-2479         -> origin/hotfix/ind-2479
+ * [new branch]          hotfix/int-5338         -> origin/hotfix/int-5338
+ * [new branch]          hotfix/int-5338-2       -> origin/hotfix/int-5338-2
+ * [new branch]          hotfix/linkedin-index-bug -> origin/hotfix/linkedin-index-bug
+ * [new branch]          hotfix/remove-deleted-profiles -> origin/hotfix/remove-deleted-profiles
+ * [new branch]          hotfix/run-1070         -> origin/hotfix/run-1070
+ * [new branch]          hotfix/run-1908         -> origin/hotfix/run-1908
+ * [new branch]          hotfix/skills-field     -> origin/hotfix/skills-field
+ * [new branch]          hotfix/srcg-4289        -> origin/hotfix/srcg-4289
+ * [new branch]          hotfix/srcg-4314        -> origin/hotfix/srcg-4314
+ * [new branch]          hotfix/triage-61607     -> origin/hotfix/triage-61607
+ * [new branch]          hotfix/workspaces-release -> origin/hotfix/workspaces-release
+ * [new branch]          hotfix/zerobounce-enum  -> origin/hotfix/zerobounce-enum
+ * [new branch]          prashi/bulkdump-requestid-prefix -> origin/prashi/bulkdump-requestid-prefix
+ * [new branch]          release/jcw/08-18-2025  -> origin/release/jcw/08-18-2025
+ * [new branch]          re
+
+---
+
+did you commit and push these changes?
