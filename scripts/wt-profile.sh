@@ -119,8 +119,14 @@ wtn() {
 }
 
 # ============================================================
-# Hotfix Workflow
+# Release & Hotfix Workflow
 # ============================================================
+
+# Create a release branch
+wt-release() {
+    bash "$WORKTREE_SCRIPTS/wt-release.sh" "$@"
+}
+
 
 wt-hotfix() {
     bash "$WORKTREE_SCRIPTS/wt-hotfix.sh" "$@"

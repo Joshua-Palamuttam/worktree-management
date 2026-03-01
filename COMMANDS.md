@@ -227,6 +227,78 @@ wt-hotfix-done payment-issue
 
 ---
 
+### `wt-release`
+Create a release branch and push it to origin. Auto-discovers naming conventions from existing branches.
+
+```cmd
+# Interactive - auto-detects repo, discovers prefixes
+wt-release
+
+# Specify prefix (for repos with sub-prefixes like backend)
+wt-release pubapi
+wt-release runtime
+wt-release cf
+
+# Target a different repo (from anywhere)
+wt-release --repo AI-1099
+wt-release --repo recruit-api
+
+# Override source branch or date
+wt-release pubapi --source main
+wt-release pubapi --date 03-05-26
+
+# Preview only
+wt-release --dry-run
+```
+
+**Options:**
+- `--source <branch>` - Source branch (default: develop, falls back to main)
+- `--date <date>` - Override today's date (must match the repo's detected format)
+- `--repo <name>` - Target a specific repo instead of using the current directory
+- `--dry-run` - Show what would happen without making changes
+
+**What it does:**
+1. Detects the repo from the current directory (or `--repo`)
+2. Fetches latest from origin
+3. Scans `origin/release/*` branches to discover prefixes and date formats
+4. If multiple sub-prefixes exist (e.g., backend's `pubapi`, `runtime`, `cf`, `ces`): prompts to select one
+5. If only one prefix (or flat structure): auto-selects
+6. Detects the date format from the most recent branch (e.g., `MM-DD-YY`, `YYYY.MM.DD`)
+7. Generates today's date in that format
+8. If a branch for today already exists and the format supports it (YYYY.MM.DD): auto-increments patch suffix (`.1`, `.2`)
+9. Confirms the plan with the user
+10. Creates the branch from the source and pushes to origin
+
+**Supported date formats** (auto-detected):
+| Format | Example | Repos |
+|--------|---------|-------|
+| `MM-DD-YY` | `03-01-26` | backend |
+| `YYYY.MM.DD` | `2026.03.01` | AI-1099, recruit-api |
+| `YYYY-MM-DD` | `2026-03-01` | (any repo using this) |
+| `MM-DD-YYYY` | `03-01-2026` | (any repo using this) |
+
+**Patch suffix (same-day releases):**
+For `YYYY.MM.DD` format repos, if `release/2026.03.01` already exists, the command creates `release/2026.03.01.1`, then `.2`, etc.
+
+**Cross-repo examples:**
+```cmd
+# Backend - has sub-prefixes, prompts for selection
+cd C:\worktrees-SeekOut\backend.git\develop
+wt-release pubapi     # → release/pubapi/03-01-26
+
+# AI-1099 - flat structure, no prefix needed
+cd C:\worktrees-SeekOut\AI-1099.git\develop
+wt-release            # → release/2026.03.01
+
+# recruit-api - flat structure, no prefix needed
+wt-release --repo recruit-api   # → release/2026.03.01
+
+# From anywhere, target any repo
+wt-release --repo backend pubapi  # → release/pubapi/03-01-26
+```
+
+---
+
 ### `wt-hotfix-pr`
 Cherry-pick a merged develop PR onto the latest release branch, with Jira tracking and postmortem.
 
@@ -515,6 +587,7 @@ wt-cleanup
 | `wt-feature <name>` | New feature branch | `wt-feature AI-1234-thing` |
 | `wt-hotfix <name>` | New hotfix branch | `wt-hotfix urgent-fix` |
 | `wt-hotfix-done <name>` | Remove hotfix worktree | `wt-hotfix-done urgent-fix` |
+| `wt-release [prefix]` | Create release branch | `wt-release pubapi` |
 | `wt-hotfix-pr <pr#>` | Cherry-pick merged PR to release | `wt-hotfix-pr 456 --ticket AI-1234` |
 | `wt-sync` | Sync branch with develop | `wt-sync` |
 | `wt-sync <branch>` | Sync with specific branch | `wt-sync main --merge` |
@@ -560,6 +633,19 @@ git push -u origin hotfix/payment-broken
 # Create PR, merge, then cleanup:
 cd ..
 git worktree remove _hotfix/payment-broken
+```
+
+### Cutting a Release
+```cmd
+# Backend - deploy the partner API
+wtr backend
+wt-release pubapi     # Creates release/pubapi/03-01-26 from develop
+
+# AI-1099 - weekly release
+wt-release --repo AI-1099   # Creates release/2026.03.01 from develop
+
+# Same-day hotfix release (AI-1099 already released today)
+wt-release --repo AI-1099   # Auto-increments to release/2026.03.01.1
 ```
 
 ### Hotfix from Develop PR
