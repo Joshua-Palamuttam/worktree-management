@@ -312,6 +312,9 @@ wt-hotfix-pr 456 --ticket AI-1234
 # Target a specific release branch
 wt-hotfix-pr 456 --ticket AI-1234 --release release/2026-02-04
 
+# Quick hotfix - no Jira, no postmortem, no AI summary
+wt-hotfix-pr 456 --quick
+
 # Preview what would happen (no changes)
 wt-hotfix-pr 456 --dry-run
 ```
@@ -319,6 +322,7 @@ wt-hotfix-pr 456 --dry-run
 **Options:**
 - `--ticket <JIRA-ID>` - Jira ticket ID (prompted interactively if not provided)
 - `--release <branch>` - Target a specific release branch instead of auto-detecting
+- `--quick`, `-q` - Skip Jira prompt (defaults to "none"), postmortem questions, and AI summary
 - `--dry-run` - Show summary without making changes
 
 **What it does:**
