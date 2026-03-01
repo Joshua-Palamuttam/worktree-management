@@ -3,7 +3,7 @@
   "checkpoint_id": "d706ce25ce2b",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 2,
+  "checkpoints_count": 3,
   "files_touched": [
     "COMMANDS.md",
     "bin/wt-release.cmd",
@@ -24,13 +24,20 @@
       "context": "/d7/06ce25ce2b/1/context.md",
       "content_hash": "/d7/06ce25ce2b/1/content_hash.txt",
       "prompt": "/d7/06ce25ce2b/1/prompt.txt"
+    },
+    {
+      "metadata": "/d7/06ce25ce2b/2/metadata.json",
+      "transcript": "/d7/06ce25ce2b/2/full.jsonl",
+      "context": "/d7/06ce25ce2b/2/context.md",
+      "content_hash": "/d7/06ce25ce2b/2/content_hash.txt",
+      "prompt": "/d7/06ce25ce2b/2/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 112,
-    "cache_creation_tokens": 149405,
-    "cache_read_tokens": 3123067,
-    "output_tokens": 11204,
-    "api_call_count": 78
+    "input_tokens": 174,
+    "cache_creation_tokens": 225324,
+    "cache_read_tokens": 5228779,
+    "output_tokens": 17775,
+    "api_call_count": 122
   }
 }
