@@ -277,7 +277,9 @@ fi
 # Extract date from release branch for naming
 release_date=$(echo "$release_branch" | sed 's|release/||')
 hotfix_branch="hotfix/${ticket}-pr-${pr_number}-to-${release_date}"
-worktree_dir="_hotfix/hotfix-pr-${pr_number}"
+# Include release target in worktree dir so the same PR can be hotfixed to multiple branches
+release_date_safe=$(echo "$release_date" | sed 's|/|-|g')
+worktree_dir="_hotfix/hotfix-pr-${pr_number}-to-${release_date_safe}"
 
 # Check if commit is already on release branch
 if git merge-base --is-ancestor "$merge_commit" "origin/${release_branch}" 2>/dev/null; then
@@ -338,7 +340,7 @@ if [ -d "$worktree_dir" ]; then
             ;;
         *)
             echo "Aborted. Remove the existing worktree first:"
-            echo "  wt-hotfix-done hotfix-pr-${pr_number}"
+            echo "  wt-hotfix-done hotfix-pr-${pr_number}-to-${release_date_safe}"
             exit 1
             ;;
     esac
@@ -411,7 +413,7 @@ else
             echo "  gh pr create --base ${release_branch} --title \"[${ticket}] Cherry-pick PR #${pr_number} to ${release_branch}\" --body \"Cherry-pick of #${pr_number}\""
             echo ""
             echo "When done:"
-            echo "  wt-hotfix-done hotfix-pr-${pr_number}"
+            echo "  wt-hotfix-done hotfix-pr-${pr_number}-to-${release_date_safe}"
             exit 1
             ;;
     esac
@@ -529,4 +531,7 @@ echo ""
 echo "📂 Worktree: ${repo_root}/${worktree_dir}"
 echo ""
 echo "When done:"
-echo "  wt-hotfix-done hotfix-pr-${pr_number}"
+echo "  wt-hotfix-done hotfix-pr-${pr_number}-to-${release_date_safe}"
+
+# Write worktree dir for shell wrapper auto-cd
+echo "$worktree_dir" > /tmp/.wt-hotfix-pr-last-dir

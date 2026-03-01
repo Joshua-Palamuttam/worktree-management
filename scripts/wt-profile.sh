@@ -143,9 +143,11 @@ wt-hotfix-done() {
 
 wt-hotfix-pr() {
     bash "$WORKTREE_SCRIPTS/wt-hotfix-pr.sh" "$@"
-    if [ $? -eq 0 ] && [ -n "$1" ]; then
+    if [ $? -eq 0 ] && [ -f /tmp/.wt-hotfix-pr-last-dir ]; then
         local repo_root=$(git rev-parse --git-common-dir 2>/dev/null || git rev-parse --git-dir)
-        cd "$repo_root/_hotfix/hotfix-pr-$1" 2>/dev/null || true
+        local wt_dir=$(cat /tmp/.wt-hotfix-pr-last-dir)
+        rm -f /tmp/.wt-hotfix-pr-last-dir
+        cd "$repo_root/$wt_dir" 2>/dev/null || true
     fi
 }
 

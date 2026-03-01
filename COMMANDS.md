@@ -346,13 +346,19 @@ The command automatically detects how the original PR was merged:
 - If the PR had multiple commits → uses patch-id comparison to distinguish squash vs rebase
 
 **Naming conventions:**
-- Hotfix branch: `hotfix/<JIRA-ID>-pr-<N>-to-<date>` (e.g., `hotfix/AI-1234-pr-456-to-2026-02-04`)
-- Worktree dir: `_hotfix/hotfix-pr-<N>` (e.g., `_hotfix/hotfix-pr-456`)
+- Hotfix branch: `hotfix/<JIRA-ID>-pr-<N>-to-<date>` (e.g., `hotfix/AI-1234-pr-456-to-runtime/02-26-26`)
+- Worktree dir: `_hotfix/hotfix-pr-<N>-to-<target>` (e.g., `_hotfix/hotfix-pr-456-to-runtime-02-26-26`)
 - PR title: `[<JIRA-ID>] Cherry-pick PR #<N> to release/<date>`
+
+**Multi-target hotfixes:** The worktree directory includes the release target, so you can hotfix the same PR to multiple branches simultaneously (e.g., PPE runtime and prod pubapi):
+```cmd
+wt-hotfix-pr 456 --release release/runtime/02-26-26    # → _hotfix/hotfix-pr-456-to-runtime-02-26-26
+wt-hotfix-pr 456 --release release/pubapi/03-01-26     # → _hotfix/hotfix-pr-456-to-pubapi-03-01-26
+```
 
 **Cleanup:** Uses existing `wt-hotfix-done` command:
 ```cmd
-wt-hotfix-done hotfix-pr-456
+wt-hotfix-done hotfix-pr-456-to-runtime-02-26-26
 ```
 
 **Note:** Automatically changes to the new worktree directory after creation.
@@ -656,8 +662,12 @@ wt-hotfix-pr 456 --ticket AI-1234
 # Answer postmortem questions, AI-generated summary added to PR
 # PR is automatically created targeting the release branch
 
-# When the hotfix PR is merged, clean up:
-wt-hotfix-done hotfix-pr-456
+# Hotfix the same PR to a second release branch (no conflicts!)
+wt-hotfix-pr 456 --ticket AI-1234 --release release/pubapi/03-01-26
+
+# When the hotfix PRs are merged, clean up each:
+wt-hotfix-done hotfix-pr-456-to-runtime-02-26-26
+wt-hotfix-done hotfix-pr-456-to-pubapi-03-01-26
 ```
 
 ### Keeping Feature Branch Up to Date
