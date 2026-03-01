@@ -1,0 +1,35 @@
+{
+  "cli_version": "dev",
+  "checkpoint_id": "d49e498783a7",
+  "session_id": "dbe1deb0-0b7b-4657-a57f-6007e1e57735",
+  "strategy": "manual-commit",
+  "created_at": "2026-03-01T21:01:42.0078378Z",
+  "branch": "main",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "COMMANDS.md",
+    "scripts/wt-hotfix-pr.sh"
+  ],
+  "agent": "Claude Code",
+  "turn_id": "6acb2e24c990",
+  "transcript_identifier_at_start": "1394672e-004c-42ac-a097-e5667d47b9ff",
+  "checkpoint_transcript_start": 98,
+  "transcript_lines_at_start": 98,
+  "token_usage": {
+    "input_tokens": 29,
+    "cache_creation_tokens": 30156,
+    "cache_read_tokens": 468448,
+    "output_tokens": 2912,
+    "api_call_count": 19
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-03-01T21:01:41.8853972Z",
+    "agent_lines": 0,
+    "human_added": 33,
+    "human_modified": 723,
+    "human_removed": 0,
+    "total_committed": 719,
+    "agent_percentage": 0
+  },
+  "transcript_path": ".claude\\projects\\C--worktrees-SeekOut-worktree-management\\dbe1deb0-0b7b-4657-a57f-6007e1e57735.jsonl"
+}
