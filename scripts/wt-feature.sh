@@ -39,6 +39,9 @@ if [ -n "$workdir" ]; then
     cd "$workdir"
 fi
 
+# Capture the invoking worktree (has freshest permissions) before cd to repo root
+invoking_wt=$(git rev-parse --show-toplevel 2>/dev/null) || true
+
 # Get the bare repo root (find .git directory or bare repo)
 repo_root=$(git rev-parse --git-dir 2>/dev/null)
 if [[ "$repo_root" == "." ]]; then
@@ -141,35 +144,9 @@ else
 fi
 
 # Copy untracked config directories (.claude, .agent) from an existing worktree
-# Uses cp -rn (no-clobber) to add missing files without overwriting git-tracked ones
-# First resolves file/directory type conflicts (e.g. git tracks skills as a file
-# but source worktree has it as a directory) so cp -rn can complete fully
-for source_wt in "$repo_root/main" "$repo_root/develop" "$repo_root/master"; do
-    if [ -d "$source_wt" ]; then
-        for config_dir in .claude .agent; do
-            if [ -d "$source_wt/$config_dir" ]; then
-                # Resolve type conflicts at one level deep
-                if [ -d "$worktree_path/$config_dir" ]; then
-                    for item in "$source_wt/$config_dir"/*; do
-                        [ -e "$item" ] || continue
-                        name=$(basename "$item")
-                        target="$worktree_path/$config_dir/$name"
-                        if [ -e "$target" ]; then
-                            if [ -d "$item" ] && [ ! -d "$target" ]; then
-                                rm -f "$target"
-                            elif [ ! -d "$item" ] && [ -d "$target" ]; then
-                                rm -rf "$target"
-                            fi
-                        fi
-                    done
-                fi
-                cp -rn "$source_wt/$config_dir" "$worktree_path/" 2>/dev/null || true
-                echo "   Synced $config_dir/ from $(basename "$source_wt")"
-            fi
-        done
-        break
-    fi
-done
+# Prefers invoking worktree (freshest permissions), falls back to main/develop/master
+source "$(dirname "$0")/wt-lib.sh"
+sync_config_to_worktree "$repo_root" "$worktree_path" "$invoking_wt"
 
 # Set upstream tracking
 cd "$worktree_path"

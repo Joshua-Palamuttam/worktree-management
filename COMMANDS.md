@@ -562,6 +562,35 @@ wt-status backend
 
 ---
 
+### `wt-sync-permissions`
+Scan worktree permissions and promote selected ones to global Claude Code settings.
+
+```cmd
+# Scan current repo's worktrees
+wt-sync-permissions
+
+# Scan all repos under WORKTREE_ROOT
+wt-sync-permissions --all
+```
+
+**Options:**
+- `--all`, `-a` - Scan all repos instead of just the current one
+
+**What it does:**
+1. Scans `.claude/settings.local.json` across all worktrees
+2. Collects unique `permissions.allow` entries not already in `~/.claude/settings.local.json`
+3. Presents each new permission interactively (y/n/all/quit)
+4. Merges selected permissions into the global settings file
+
+**Why this matters:**
+- When you use "yes and don't ask again" in a feature worktree, that permission is saved to the worktree's local `.claude/settings.local.json`
+- Those permissions don't automatically carry over to new worktrees
+- This command lets you promote useful permissions to the global settings, so all new worktrees (and all projects) get them automatically
+
+**Requires:** `node` (for reliable JSON read/write)
+
+---
+
 ### `wt-cleanup`
 Remove stale worktrees and identify merged branches.
 
@@ -606,6 +635,7 @@ wt-cleanup
 | `wt-remove` | Interactive worktree removal | `wt-remove` |
 | `wt-remove <name>` | Remove specific worktree | `wt-remove AI-1234-thing` |
 | `wt-remove <name> -d` | Remove worktree and branch | `wt-remove AI-1234-thing -d` |
+| `wt-sync-permissions` | Promote worktree permissions to global | `wt-sync-permissions --all` |
 | `wt-status` | Status of all repos | `wt-status` |
 | `wt-cleanup` | Clean stale worktrees | `wt-cleanup --dry-run` |
 

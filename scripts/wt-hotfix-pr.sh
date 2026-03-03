@@ -79,6 +79,9 @@ if [ -n "$workdir" ]; then
     cd "$workdir"
 fi
 
+# Capture the invoking worktree (has freshest permissions) before cd to repo root
+invoking_wt=$(git rev-parse --show-toplevel 2>/dev/null) || true
+
 # Validate gh CLI
 if ! command -v gh &> /dev/null; then
     echo "❌ GitHub CLI (gh) is required but not installed."
@@ -365,6 +368,11 @@ echo ""
 echo "📁 Creating worktree..."
 mkdir -p "_hotfix"
 git worktree add -b "$hotfix_branch" "$worktree_dir" "origin/${release_branch}"
+
+# Copy untracked config directories (.claude, .agent) from an existing worktree
+# Prefers invoking worktree (freshest permissions), falls back to main/develop/master
+source "$(dirname "$0")/wt-lib.sh"
+sync_config_to_worktree "$repo_root" "$worktree_dir" "$invoking_wt"
 
 # Cherry-pick
 echo ""
