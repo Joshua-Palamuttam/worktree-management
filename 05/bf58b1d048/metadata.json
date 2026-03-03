@@ -3,7 +3,7 @@
   "checkpoint_id": "05bf58b1d048",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 2,
+  "checkpoints_count": 3,
   "files_touched": [
     "COMMANDS.md",
     "bin/wt-sync-permissions.cmd",
@@ -35,6 +35,13 @@
       "context": "/05/bf58b1d048/2/context.md",
       "content_hash": "/05/bf58b1d048/2/content_hash.txt",
       "prompt": "/05/bf58b1d048/2/prompt.txt"
+    },
+    {
+      "metadata": "/05/bf58b1d048/3/metadata.json",
+      "transcript": "/05/bf58b1d048/3/full.jsonl",
+      "context": "",
+      "content_hash": "/05/bf58b1d048/3/content_hash.txt",
+      "prompt": ""
     }
   ],
   "token_usage": {
