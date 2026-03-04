@@ -48,6 +48,16 @@ fi
 
 global_settings="$HOME/.claude/settings.local.json"
 
+# Convert paths for Node.js (Windows binary can't read /c/Users/... paths)
+# Uses cygpath -m for forward-slash Windows paths (avoids backslash escaping issues in JS)
+to_node_path() {
+    if command -v cygpath &>/dev/null; then
+        cygpath -m "$1"
+    else
+        echo "$1"
+    fi
+}
+
 # Ensure global settings file exists
 if [ ! -f "$global_settings" ]; then
     mkdir -p "$HOME/.claude"
@@ -101,18 +111,27 @@ fi
 
 echo "Scanning ${#settings_files[@]} worktree settings file(s)..."
 
+# Convert global settings path for Node.js
+global_settings_node=$(to_node_path "$global_settings")
+
+# Build JSON array of file paths (converted for Node.js)
+files_json="["
+first=true
+for f in "${settings_files[@]}"; do
+    if [ "$first" = true ]; then first=false; else files_json+=","; fi
+    files_json+="\"$(to_node_path "$f")\""
+done
+files_json+="]"
+
 # Use node to collect unique permissions not in global settings
 new_perms=$(node -e "
 const fs = require('fs');
 
-const globalSettings = JSON.parse(fs.readFileSync('$global_settings', 'utf8'));
+const globalSettings = JSON.parse(fs.readFileSync('$global_settings_node', 'utf8'));
 const globalAllow = new Set((globalSettings.permissions && globalSettings.permissions.allow) || []);
 
 const allPerms = new Set();
-const files = $(printf '%s\n' "${settings_files[@]}" | node -e "
-const lines = require('fs').readFileSync('/dev/stdin','utf8').trim().split('\n');
-process.stdout.write(JSON.stringify(lines));
-");
+const files = $files_json;
 
 for (const f of files) {
     try {
@@ -124,16 +143,16 @@ for (const f of files) {
 
 const newPerms = [...allPerms].filter(p => !globalAllow.has(p)).sort();
 console.log(JSON.stringify(newPerms));
-" 2>/dev/null) || {
+") || {
     echo "Error reading settings files. Is node installed?"
     exit 1
 }
 
 # Parse the JSON array into a bash array
 readarray -t perm_array < <(node -e "
-const perms = JSON.parse('$new_perms');
+const perms = $new_perms;
 perms.forEach(p => console.log(p));
-" 2>/dev/null)
+")
 
 if [ ${#perm_array[@]} -eq 0 ]; then
     echo "All worktree permissions are already in global settings. Nothing to do."
@@ -183,19 +202,22 @@ if [ ${#selected[@]} -eq 0 ]; then
     exit 0
 fi
 
-# Merge selected permissions into global settings using node
-selected_json=$(printf '%s\n' "${selected[@]}" | node -e "
-const lines = require('fs').readFileSync('/dev/stdin','utf8').trim().split('\n');
-process.stdout.write(JSON.stringify(lines));
-" 2>/dev/null)
+# Build JSON array of selected permissions in bash
+selected_json="["
+first=true
+for p in "${selected[@]}"; do
+    if [ "$first" = true ]; then first=false; else selected_json+=","; fi
+    selected_json+="\"$p\""
+done
+selected_json+="]"
 
 node -e "
 const fs = require('fs');
-const settings = JSON.parse(fs.readFileSync('$global_settings', 'utf8'));
+const settings = JSON.parse(fs.readFileSync('$global_settings_node', 'utf8'));
 if (!settings.permissions) settings.permissions = {};
 if (!settings.permissions.allow) settings.permissions.allow = [];
 
-const selected = JSON.parse('$selected_json');
+const selected = $selected_json;
 const existing = new Set(settings.permissions.allow);
 let added = 0;
 for (const p of selected) {
@@ -206,9 +228,9 @@ for (const p of selected) {
 }
 
 settings.permissions.allow.sort();
-fs.writeFileSync('$global_settings', JSON.stringify(settings, null, 2) + '\n');
+fs.writeFileSync('$global_settings_node', JSON.stringify(settings, null, 2) + '\n');
 console.log('Added ' + added + ' permission(s) to global settings.');
-" 2>/dev/null
+"
 
 echo ""
 echo "Global settings updated: $global_settings"
