@@ -1,0 +1,157 @@
+Implement the following plan:
+
+# Fix: Claude Code settings.local.json not carrying over to new worktrees
+
+## Context
+
+When creating worktrees with `wt-feature` (and `wt-hotfix`, `wt-review`), the config sync only copies `.claude/` from named worktrees (`main`, `develop`, `master`). Permissions accumulated in feature worktrees via "yes and don't ask again" never propagate to new worktrees because they're never synced back to the named source worktrees. This means every new worktree starts with sparse/stale permissions.
+
+## Changes
+
+### 1. Create `scripts/wt-lib.sh` — shared config sync function
+
+Extract the duplicated config sync block (identical in 3 scripts) into a shared function that:
+- Accepts an optional **invoking worktree** as the preferred source (where the user ran the command from — has freshest permissions)
+- Falls back to `main` / `develop` / `master` if the invoking worktree is unavailable
+- Reuses the existing `cp -rn` + type-conflict-resolution logic
+
+No `.cmd` wrapper needed — this is a library sourced by other scripts, not a standalone command.
+
+### 2. Update `scripts/wt-feature.sh`
+
+- Capture `invoking_wt` (via `git rev-parse --show-toplevel`) after `cd "$workdir"` but before `cd "$repo_root"`
+- Replace the inline config sync block (lines 143-172) with `source wt-lib.sh` + function call
+
+### 3. Update `scripts/wt-hotfix.sh`
+
+- Capture `invoking_wt` after `cd "$workdir"` (line 35) but before `cd "$repo_root"` (line 40)
+- Replace the inline config sync block (lines 46-76) with shared function call
+
+### 4. Update `scripts/wt-review.sh`
+
+- Add `--workdir` argument parsing (currently ignores it despite `wt-review.cmd` passing it)
+- Capture `invoking_wt` before `cd "$repo_root"` (line 28)
+- Replace the inline config sync block (lines 83-112) with shared function call
+
+### 5. Update `scripts/wt-hotfix-pr.sh`
+
+- Capture `invoking_wt` after `cd "$workdir"` (line 79) but before `cd "$repo_root"` (line 91)
+- Add config sync after worktree creation (line 367) — currently has NO config sync at all
+
+### 6. Create `scripts/wt-sync-permissions.sh` + `bin/wt-sync-permissions.cmd` — interactive permission sync
+
+New command that scans worktrees and lets you promote permissions to global settings:
+
+1. Scans all `.claude/settings.local.json` files across worktrees in the current repo (or all repos with `--all`)
+2. Collects all unique `permissions.allow` entries NOT already in `~/.claude/settings.local.json`
+3. Presents each new permission interactively — user picks `y/n/a(ll)/q(uit)` for each
+4. Merges selected permissions into the global settings file
+
+Uses `node -e` for reliable JSON read/write (available on all dev machines).
+
+Usage:
+```
+wt-sync-permissions          # Scan current repo's worktrees
+wt-sync-permissions --all    # Scan all repos under WORKTREE_ROOT
+```
+
+### 7. Update global `~/.claude/settings.local.json` — one-time baseline
+
+Pre-populate with commonly-used permissions gathered from all existing worktrees. These apply to ALL projects so new worktrees always have a baseline:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(echo:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(curl:*)",
+      "Bash(bash:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(node:*)",
+      "Bash(pip install:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git fetch:*)",
+      "Bash(git status:*)",
+      "Bash(git checkout:*)",
+      "Bash(git config:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)",
+      "Bash(dotnet run:*)",
+      "Bash(tasklist:*)",
+      "Bash(netstat:*)",
+      "Bash(xargs:*)",
+      "Read(//c/Seekout/AI-1099/**)",
+      "Read(//c/Seekout/seekout-claude-marketplace/plugins/**)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "mcp__seekout-dev__seekout_search_people",
+      "mcp__seekout-dev__seekout_get_profile",
+      "mcp__seekout-dev__seekout_get_facets",
+      "mcp__seekout-dev__seekout_count_results"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
+```
+
+## Files Modified
+
+| File | Action |
+|------|--------|
+| `scripts/wt-lib.sh` | **NEW** — shared `sync_config_to_worktree` function |
+| `scripts/wt-sync-permissions.sh` | **NEW** — interactive permission promotion to global settings |
+| `bin/wt-sync-permissions.cmd` | **NEW** — Windows wrapper |
+| `scripts/wt-feature.sh` | Capture invoking worktree, replace inline sync with function call |
+| `scripts/wt-hotfix.sh` | Capture invoking worktree, replace inline sync with function call |
+| `scripts/wt-review.sh` | Add `--workdir` parsing, capture invoking worktree, replace inline sync |
+| `scripts/wt-hotfix-pr.sh` | Capture invoking worktree, add config sync (was missing entirely) |
+| `command-center.git/main/.claude/skills/sync-permissions/SKILL.md` | **NEW** — Claude Code skill (in command-center repo) |
+| `~/.claude/settings.local.json` | Add common permissions as global baseline |
+| `COMMANDS.md` | Add wt-sync-permissions documentation |
+
+### 8. Create skill in command-center repo
+
+**File**: `/c/worktrees-SeekOut/command-center.git/main/.claude/skills/sync-permissions/SKILL.md`
+
+Following the pattern of other command-center skills:
+- Frontmatter with `name`, `description`, `argument-hint`
+- Support `--all` flag to scan all repos, or auto-detect current repo
+- Invoke `wt-sync-permissions.sh` via `bash C:/worktrees-SeekOut/worktree_management/scripts/wt-sync-permissions.sh`
+- Report what permissions were added to global settings
+
+## Documentation
+
+- Update `COMMANDS.md` with `wt-sync-permissions` command (usage, examples, what it does)
+
+## Verification
+
+1. From a feature worktree with accumulated permissions, run `wt-feature test-sync-delete-me develop` — verify `settings.local.json` carries over
+2. From the bare repo root, run `wt-feature test-bare-delete-me develop` — verify fallback to develop's settings
+3. Run `wt-sync-permissions` and verify it finds permissions, presents interactive selection, and writes to global settings
+4. Clean up test worktrees with `wt-remove`
+
+
+If you need specific details from before exiting plan mode (like exact code snippets, error messages, or content you generated), read the full transcript at: C:\Users\JoshuaPalamuttam\.claude\projects\C--worktrees-SeekOut-worktree-management\409447fe-3594-46cd-948b-7770d9a84a5c.jsonl
+
+If this plan can be broken down into multiple independent tasks, consider using the TeamCreate tool to create a team and parallelize the work.
+
+---
+
+is this tested now?
+
+---
+
+yea run these tests
+
+---
+
+OK COMMIT, AND PUSH
