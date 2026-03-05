@@ -17,6 +17,7 @@ custom_date=""
 repo_name=""
 dry_run=false
 workdir=""
+auto_yes=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -34,6 +35,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --dry-run)
             dry_run=true
+            shift
+            ;;
+        --yes|-y)
+            auto_yes=true
             shift
             ;;
         --workdir)
@@ -56,6 +61,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --date <date>          Override today's date (must match repo's format)"
             echo "  --repo <name>          Target a specific repo (default: current repo)"
             echo "  --dry-run              Show what would happen without making changes"
+            echo "  --yes, -y              Skip confirmation prompt (for automation)"
             echo "  --help, -h             Show this help message"
             echo ""
             echo "Examples:"
@@ -363,14 +369,18 @@ if [ "$dry_run" = true ]; then
     exit 0
 fi
 
-read -p "Proceed? [Y/n] " proceed < /dev/tty
-case "$proceed" in
-    ""|[Yy]|[Yy]es) ;;
-    *)
-        echo "Cancelled."
-        exit 1
-        ;;
-esac
+if [ "$auto_yes" = true ]; then
+    echo "   (auto-confirmed via --yes)"
+else
+    read -p "Proceed? [Y/n] " proceed < /dev/tty
+    case "$proceed" in
+        ""|[Yy]|[Yy]es) ;;
+        *)
+            echo "Cancelled."
+            exit 1
+            ;;
+    esac
+fi
 
 # Create and push
 echo ""
