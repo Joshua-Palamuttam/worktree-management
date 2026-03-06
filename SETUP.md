@@ -1,17 +1,77 @@
 # Worktree Management Setup Guide
 
-This guide walks you through setting up the git worktree workflow from scratch.
-
-## Prerequisites
-
-- **Git for Windows** installed (includes Git Bash)
-- **Windows Terminal** (optional, but recommended)
+This guide walks you through setting up the git worktree workflow on macOS or Windows.
 
 ---
 
-## Step 1: Clone the Management Repository
+## macOS Setup
 
-If you're setting this up fresh, clone or copy the `worktree_management` folder to:
+### Prerequisites
+
+- **Homebrew** installed
+- **fzf** installed (`brew install fzf`)
+- **GitHub CLI** installed (`brew install gh`) - for PR-related commands
+
+### Step 1: Clone the Management Repository
+
+```bash
+cd ~/Developer
+git clone https://github.com/YourOrg/worktree-management.git
+```
+
+### Step 2: Configure Your Shell
+
+Add this line to your `~/.zshrc`:
+
+```zsh
+source ~/Developer/worktree-management/mac/wt-profile.zsh
+```
+
+Then reload:
+```bash
+source ~/.zshrc
+```
+
+This loads all `wt-*` commands and navigation functions (`wtgo`, `wtr`, `wtd`, `wtm`, `wtl`, `wtn`) into your shell, with zsh tab completion.
+
+### Step 3: Migrate Your First Repository
+
+```bash
+wt-migrate --from-url https://github.com/YourOrg/your-repo.git
+```
+
+This creates:
+```
+~/Developer/worktrees/
+└── your-repo.git/
+    ├── main/
+    ├── develop/        (if exists)
+    ├── _feature/
+    ├── _review/
+    └── _hotfix/
+```
+
+### Step 4: Start Working
+
+```bash
+wtr your-repo            # Jump to repo
+wtd                      # Jump to develop
+wt-feature my-feature    # Create feature worktree
+```
+
+---
+
+## Windows Setup
+
+### Prerequisites
+
+- **Git for Windows** installed (includes Git Bash)
+- **Windows Terminal** (optional, but recommended)
+- **GitHub CLI** installed - for PR-related commands
+
+### Step 1: Clone the Management Repository
+
+Clone or copy the repo to your worktree root:
 
 ```
 C:\worktrees-SeekOut\worktree_management\
@@ -21,53 +81,53 @@ The structure should look like:
 ```
 C:\worktrees-SeekOut\
 └── worktree_management\
-    ├── bin\           # Windows cmd wrappers
-    ├── scripts\       # Bash scripts
-    ├── templates\     # Claude/VSCode configs
-    ├── config.yaml    # Repo registry
+    ├── windows\
+    │   ├── bin\       # Windows cmd wrappers
+    │   └── scripts\   # Bash scripts
+    ├── mac\           # macOS scripts (not used on Windows)
+    ├── templates\
+    ├── config.yaml
     └── README.md
 ```
 
----
+### Step 2: Configure Your Shell
 
-## Step 2: Configure Your Shell
-
-### For Git Bash
+#### For Git Bash
 
 Add this line to your `~/.bashrc` file:
 
 ```bash
-source "C:/worktrees-SeekOut/worktree_management/scripts/wt-profile.sh"
+source "C:/worktrees-SeekOut/worktree_management/windows/scripts/wt-profile.sh"
 ```
 
 **To add it via command line:**
 ```bash
-echo 'source "C:/worktrees-SeekOut/worktree_management/scripts/wt-profile.sh"' >> ~/.bashrc
+echo 'source "C:/worktrees-SeekOut/worktree_management/windows/scripts/wt-profile.sh"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-You should see: `✅ Worktree functions loaded. Type 'wt-status' to see all repos.`
+You should see: `Worktree functions loaded. Type 'wt-status' to see all repos.`
 
-### For Windows Command Prompt
+#### For Windows Command Prompt
 
 **Step 1: Add the `bin` directory to your PATH**
 
 *Option A: Via PowerShell (run once)*
 ```powershell
-[Environment]::SetEnvironmentVariable('Path', [Environment]::GetEnvironmentVariable('Path', 'User') + ';C:\worktrees-SeekOut\worktree_management\bin', 'User')
+[Environment]::SetEnvironmentVariable('Path', [Environment]::GetEnvironmentVariable('Path', 'User') + ';C:\worktrees-SeekOut\worktree_management\windows\bin', 'User')
 ```
 
 *Option B: Via System Settings*
 1. Press `Win + R`, type `sysdm.cpl`, press Enter
-2. Click "Advanced" tab → "Environment Variables"
-3. Under "User variables", select `Path` → Edit
-4. Add new entry: `C:\worktrees-SeekOut\worktree_management\bin`
+2. Click "Advanced" tab -> "Environment Variables"
+3. Under "User variables", select `Path` -> Edit
+4. Add new entry: `C:\worktrees-SeekOut\worktree_management\windows\bin`
 5. Click OK and restart your terminal
 
 **Step 2: Run setup to configure Git Bash path**
 
 ```cmd
-C:\worktrees-SeekOut\worktree_management\bin\setup.cmd
+C:\worktrees-SeekOut\worktree_management\windows\bin\setup.cmd
 ```
 
 This creates `wt-config.cmd` with your machine-specific paths. You only need to run this once.
@@ -77,198 +137,140 @@ This creates `wt-config.cmd` with your machine-specific paths. You only need to 
 wt-status
 ```
 
-> **Note:** The setup script finds Git Bash automatically. This is required because Windows may have WSL's bash which uses different paths.
-
----
-
-## Step 3: Migrate Your First Repository
-
-Take any GitHub repository and convert it to the worktree structure.
-
-### From a GitHub URL
+### Step 3: Migrate Your First Repository
 
 ```cmd
 wt-migrate --from-url https://github.com/YourOrg/your-repo.git
 ```
 
-**Example:**
-```cmd
-wt-migrate --from-url https://github.com/Zipstorm/AI-1099.git
-```
-
-This creates:
-```
-C:\worktrees-SeekOut\
-└── AI-1099.git\          # Bare repository (git database)
-    ├── main\             # Worktree: main branch
-    ├── develop\          # Worktree: develop branch (if exists)
-    ├── _feature\         # Your feature branches go here
-    ├── _review\          # PR review worktrees
-    └── _hotfix\          # Emergency hotfixes
-```
-
-### With a Custom Name
+### Step 4: Start Working
 
 ```cmd
-wt-migrate --from-url https://github.com/Zipstorm/backend.git my-backend
-```
-
-### From an Existing Local Clone
-
-If you already have a repo cloned locally:
-
-```cmd
-wt-migrate --from-dir "C:\path\to\existing\repo"
-```
-
-This fetches fresh from the remote and creates the worktree structure.
-
----
-
-## Step 4: Start Working
-
-### Navigate to your repo
-```cmd
-wtr AI-1099
-```
-
-### Jump to the develop branch
-```cmd
+wtr your-repo
 wtd
-```
-
-### Create a feature branch
-```cmd
-wt-feature my-new-feature
-```
-
-This creates: `AI-1099.git\_feature\my-new-feature\`
-
-### Review a PR
-```cmd
-wt-review 123
-```
-
-This checks out PR #123 into `AI-1099.git\_review\current\`
-
-### When done reviewing
-```cmd
-wt-review-done
+wt-feature my-feature
 ```
 
 ---
 
-## Command Reference
+## Migrating from Previous Directory Structure
 
-### Navigation
+If you're upgrading from the old structure where `scripts/` and `bin/` were at the repo root, you need to update your paths after pulling the latest changes.
 
-| Command | Description |
-|---------|-------------|
-| `wtgo` | Jump to `C:\worktrees-SeekOut\` |
-| `wtr <repo>` | Jump to a repo's bare directory |
-| `wtr` | List all available repos |
-| `wtd [repo]` | Jump to develop worktree |
-| `wtm [repo]` | Jump to main worktree |
-| `wtl` | List worktrees in current repo |
+### Windows Migration Steps
 
-### Workflow
+After `git pull`:
 
-| Command | Description |
-|---------|-------------|
-| `wt-migrate --from-url <url>` | Clone repo to worktree structure |
-| `wt-migrate --from-dir <path>` | Migrate existing local repo |
-| `wt-feature <name>` | Create feature worktree from develop |
-| `wt-review <pr#>` | Checkout PR for review |
-| `wt-review-done` | Clean up review worktree |
-| `wt-hotfix <name>` | Create hotfix from develop |
-| `wt-remove <name>` | Remove a worktree when done |
-| `wt-status` | Show status across all repos |
-| `wt-cleanup` | Remove stale worktrees |
+1. **Update PATH** - change `bin` to `windows\bin`:
+   - Old: `C:\worktrees-SeekOut\worktree_management\bin`
+   - New: `C:\worktrees-SeekOut\worktree_management\windows\bin`
+
+2. **Update `.bashrc`** (Git Bash) - change source path:
+   ```bash
+   # Old:
+   # source "C:/worktrees-SeekOut/worktree_management/scripts/wt-profile.sh"
+
+   # New:
+   source "C:/worktrees-SeekOut/worktree_management/windows/scripts/wt-profile.sh"
+   ```
+
+3. **Re-run setup** to regenerate config files in the new location:
+   ```cmd
+   C:\worktrees-SeekOut\worktree_management\windows\bin\setup.cmd
+   ```
+
+The auto-generated `wt-config.cmd` and `wt-config.sh` files are gitignored and won't be moved automatically. Re-running setup creates them in the correct new location.
+
+### macOS Migration Steps
+
+If you previously had scripts sourced from `scripts/wt-profile.sh`, switch to the mac-native profile:
+
+```zsh
+# In ~/.zshrc, replace any old source line with:
+source ~/Developer/worktree-management/mac/wt-profile.zsh
+```
 
 ---
 
 ## Example: Full Migration Workflow
 
-Let's say you want to migrate 3 repos:
+### macOS
 
-```cmd
-REM Migrate repos
-wt-migrate --from-url https://github.com/Zipstorm/backend.git
-wt-migrate --from-url https://github.com/Zipstorm/integrations.git
-wt-migrate --from-url https://github.com/Zipstorm/recruit-api.git
+```bash
+# Migrate repos
+wt-migrate --from-url https://github.com/YourOrg/backend.git
+wt-migrate --from-url https://github.com/YourOrg/integrations.git
 
-REM Verify
+# Verify
 wt-status
 
-REM Start working on backend
+# Start working
 wtr backend
 wtd
 wt-feature AI-1234-new-feature
 
-REM Quick PR review without losing your work
+# Quick PR review
 wt-review 567
-
-REM Done reviewing, back to feature
 wt-review-done
-cd ..\develop\_feature\AI-1234-new-feature
 
-REM When feature is complete and merged, clean up
+# When feature is done
+wt-remove AI-1234-new-feature
+```
+
+### Windows
+
+```cmd
+REM Migrate repos
+wt-migrate --from-url https://github.com/YourOrg/backend.git
+wt-migrate --from-url https://github.com/YourOrg/integrations.git
+
+REM Verify
+wt-status
+
+REM Start working
+wtr backend
+wtd
+wt-feature AI-1234-new-feature
+
+REM Quick PR review
+wt-review 567
+wt-review-done
+
+REM When feature is done
 wt-remove AI-1234-new-feature
 ```
 
 ---
 
-## Directory Structure Explained
-
-```
-C:\worktrees-SeekOut\
-│
-├── worktree_management\     # Management tools (this repo)
-│   ├── bin\                 # .cmd files for Windows Command Prompt
-│   ├── scripts\             # .sh files for Git Bash
-│   └── templates\           # Shared configs
-│
-├── backend.git\             # Bare repo (no working files, just git data)
-│   ├── main\                # Permanent worktree - clean main branch
-│   ├── develop\             # Permanent worktree - integration branch
-│   ├── _feature\            # Your feature worktrees
-│   │   ├── AI-1234-thing\
-│   │   └── AI-5678-other\
-│   ├── _review\             # Ephemeral review worktrees
-│   │   └── current\
-│   └── _hotfix\             # Emergency hotfix worktrees
-│
-└── integrations.git\        # Another bare repo
-    └── ...
-```
-
-**Why bare repos?**
-- Single git database shared across all worktrees
-- No duplicate `.git` directories
-- Faster operations, less disk space
-- Clean separation of concerns
-
----
-
 ## Troubleshooting
 
-### "No such file or directory" when running wt-* commands
-Run `setup.cmd` first to configure Git Bash:
+### "No such file or directory" when running wt-* commands (Windows)
+Run `setup.cmd` to configure Git Bash:
 ```cmd
-C:\worktrees-SeekOut\worktree_management\bin\setup.cmd
+C:\worktrees-SeekOut\worktree_management\windows\bin\setup.cmd
 ```
 This is required because Windows may use WSL's bash (which uses `/mnt/c/` paths) instead of Git Bash (which uses `/c/` paths).
 
-### "bash: command not found" in Command Prompt
+### "command not found" for wt-* commands (macOS)
+Make sure you've sourced the profile in `~/.zshrc`:
+```zsh
+source ~/Developer/worktree-management/mac/wt-profile.zsh
+```
+Then reload: `source ~/.zshrc`
+
+### fzf not found (macOS)
+Install fzf: `brew install fzf`
+
+### "bash: command not found" in Command Prompt (Windows)
 Make sure Git for Windows is installed and `git` is in your PATH.
 
-### Commands not found after adding to PATH
+### Commands not found after adding to PATH (Windows)
 Close and reopen your terminal. PATH changes require a new session.
 
 ### Worktree shows "(detached HEAD)"
 This is normal for worktrees created from remote branches. You can work normally - commits will still be on the correct branch.
 
-### ".bashrc: command not found" errors
+### ".bashrc: command not found" errors (Windows)
 Your `.bashrc` may have encoding issues (UTF-16 BOM). Fix it by saving as UTF-8:
 ```bash
 # In Git Bash:

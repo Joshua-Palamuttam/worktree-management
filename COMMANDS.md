@@ -1,6 +1,8 @@
 # Worktree Commands Reference
 
-All commands work in both **Git Bash** and **Windows Command Prompt**.
+All commands work on both **macOS** (via `wt-profile.zsh`) and **Windows** (via Git Bash or Command Prompt).
+
+On macOS, interactive selection uses **fzf**. On Windows, interactive selection uses numbered menus with text filtering.
 
 ---
 

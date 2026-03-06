@@ -1,6 +1,6 @@
 # Worktree Management
 
-A workflow for managing multiple repositories with git worktrees.
+A workflow for managing multiple repositories with git worktrees. Supports both Windows and macOS with platform-native implementations.
 
 ## Documentation
 
@@ -12,33 +12,45 @@ A workflow for managing multiple repositories with git worktrees.
 
 ## Quick Start
 
-### For Git Bash
+### macOS
+
+Add this line to your `~/.zshrc`:
+
+```zsh
+source ~/Developer/worktree-management/mac/wt-profile.zsh
+```
+
+Then reload: `source ~/.zshrc`
+
+### Windows (Git Bash)
 
 Add this line to your `~/.bashrc`:
 
 ```bash
-source "C:/worktrees-SeekOut/worktree_management/scripts/wt-profile.sh"
+source "C:/worktrees-SeekOut/worktree_management/windows/scripts/wt-profile.sh"
 ```
 
 Then reload: `source ~/.bashrc`
 
-### For Windows Command Prompt
+### Windows (Command Prompt)
 
-1. Add to PATH: `C:\worktrees-SeekOut\worktree_management\bin`
+1. Add to PATH: `C:\worktrees-SeekOut\worktree_management\windows\bin`
 2. Run setup once:
 ```cmd
-C:\worktrees-SeekOut\worktree_management\bin\setup.cmd
+C:\worktrees-SeekOut\worktree_management\windows\bin\setup.cmd
 ```
 
 ### Initialize a repository
 
 ```bash
-wt-init https://github.com/Zipstorm/backend.git
+wt-migrate --from-url https://github.com/YourOrg/backend.git
 ```
 
 This creates:
 ```
-C:/worktrees-SeekOut/
+~/Developer/worktrees/          # macOS
+C:/worktrees-SeekOut/           # Windows
+
 └── backend.git/
     ├── main/           # Clean main branch
     ├── develop/        # Integration branch
@@ -73,10 +85,23 @@ wt-review-done
 ```bash
 wt-hotfix critical-bug
 # Now in: backend.git/_hotfix/critical-bug/
-# Based on develop
 
 # When done:
 wt-hotfix-done critical-bug
+```
+
+### Cutting a release
+
+```bash
+wt-release pubapi         # Backend: release/pubapi/MM-DD-YY
+wt-release --repo AI-1099 # AI-1099: release/YYYY.MM.DD
+```
+
+### Cherry-pick a PR to release
+
+```bash
+wt-hotfix-pr 456 --ticket AI-1234
+# Creates worktree, cherry-picks, creates PR with postmortem
 ```
 
 ### Check status across all repos
@@ -95,6 +120,7 @@ wt-remove AI-1234-new-feature
 
 | Command | Description |
 |---------|-------------|
+| `wtn` | Interactive navigation (fzf on Mac, menus on Windows) |
 | `wtgo` | Jump to worktree root |
 | `wtr <repo>` | Jump to repo (tab completion) |
 | `wtd [repo]` | Jump to develop worktree |
@@ -105,14 +131,21 @@ wt-remove AI-1234-new-feature
 ## Directory Structure
 
 ```
-C:/worktrees-SeekOut/
-├── worktree_management/    # This management repo
-│   ├── bin/                # Windows cmd wrappers
-│   ├── scripts/            # Bash scripts
-│   ├── templates/          # Claude/VSCode configs
-│   └── config.yaml         # Repo registry
-│
-├── backend.git/            # Bare repo
+worktree-management/            # This management repo
+├── mac/                        # macOS scripts (bash + zsh profile)
+│   ├── wt-profile.zsh          # Source from ~/.zshrc
+│   ├── wt-lib.sh               # Shared helpers
+│   └── wt-*.sh                 # Command scripts
+├── windows/                    # Windows scripts
+│   ├── bin/                    # .cmd wrappers for Command Prompt
+│   └── scripts/                # .sh scripts for Git Bash
+├── skills/                     # Claude Code skills (shared)
+├── templates/                  # Config templates (shared)
+└── config.yaml                 # Repo registry (shared)
+
+~/Developer/worktrees/          # Managed repos (macOS)
+C:\worktrees-SeekOut\           # Managed repos (Windows)
+├── backend.git/
 │   ├── main/
 │   ├── develop/
 │   ├── _feature/
@@ -120,13 +153,21 @@ C:/worktrees-SeekOut/
 │   ├── _review/
 │   │   └── current/
 │   └── _hotfix/
-│
 ├── AI-1099.git/
 │   └── ...
-│
 └── integrations.git/
     └── ...
 ```
+
+## Platform Differences
+
+| Aspect | macOS | Windows |
+|--------|-------|---------|
+| Shell profile | `wt-profile.zsh` (zsh) | `wt-profile.sh` (bash) |
+| Interactive selection | fzf | Numbered menus |
+| Tab completion | zsh `compdef` | bash `complete -F` |
+| Default worktree root | `~/Developer/worktrees` | `C:/worktrees-SeekOut` |
+| CMD support | N/A | `.cmd` wrappers in `windows/bin/` |
 
 ## Benefits
 
@@ -136,50 +177,17 @@ C:/worktrees-SeekOut/
 4. **Clean builds** - `main/` worktree is always pristine
 5. **Muscle memory** - Same structure across all repos
 
-## Migrating Repositories
-
-The `wt-migrate` script handles both fresh clones and existing local repos.
-
-### From GitHub URL (recommended)
-
-```bash
-# Basic usage
-wt-migrate --from-url https://github.com/Zipstorm/backend.git
-
-# With custom name
-wt-migrate --from-url https://github.com/Zipstorm/backend.git my-backend
-```
-
-### From Existing Local Directory
-
-```bash
-# Migrate from existing clone (fetches fresh from remote)
-wt-migrate --from-dir "C:/Seekout/backend"
-
-# With custom name
-wt-migrate --from-dir "C:/Seekout/AI-1099" AI-1099
-```
-
-### What Migration Does
-
-1. Clones the repo as a bare repository (`repo.git/`)
-2. Configures proper remote tracking
-3. Creates `main/` and `develop/` worktrees (if branches exist)
-4. Creates `_feature/`, `_review/`, `_hotfix/` directories
-
-Your original repos remain untouched - this creates a parallel structure.
-
 ## Tips
 
 ### IDE Setup
 - Open each worktree as a separate project/window
-- Use VS Code's Git Worktree extension for easy switching
-- Symlink shared configs from `templates/` if needed
+- VS Code: Install the "Git Worktrees" extension for easy switching
+- Each worktree is independent - you can have multiple IDEs open
 
 ### Claude Code
 - Each worktree gets its own Claude context
 - Run parallel agents on different features
-- Use `_review/` worktree in read-only mode
+- Use `_review/` worktree in read-only mode for code reviews
 
 ### Cleanup
 ```bash

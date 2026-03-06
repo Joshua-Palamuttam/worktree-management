@@ -12,5 +12,5 @@ Thumbs.db
 secrets/
 
 # Machine-specific config (created by setup.cmd/setup.sh)
-bin/wt-config.cmd
-scripts/wt-config.sh
+windows/bin/wt-config.cmd
+windows/scripts/wt-config.sh
