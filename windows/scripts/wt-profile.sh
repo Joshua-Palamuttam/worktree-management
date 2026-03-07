@@ -1,10 +1,10 @@
 #!/bin/bash
 # wt-profile.sh - Source this in your .bashrc or .zshrc
 # Add this line to your shell profile:
-#   source "C:/worktrees-SeekOut/worktree_management/scripts/wt-profile.sh"
+#   source "C:/worktrees-SeekOut/worktree_management/windows/scripts/wt-profile.sh"
 
 export WORKTREE_ROOT="C:/worktrees-SeekOut"
-export WORKTREE_SCRIPTS="$WORKTREE_ROOT/worktree_management/scripts"
+export WORKTREE_SCRIPTS="$WORKTREE_ROOT/worktree_management/windows/scripts"
 
 # ============================================================
 # Core Worktree Functions
